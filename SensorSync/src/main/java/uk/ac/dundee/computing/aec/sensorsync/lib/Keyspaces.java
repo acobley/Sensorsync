@@ -59,14 +59,7 @@ public final class Keyspaces {
             } catch (Exception et) {
                 System.out.println("Can't create tweet table " + et);
             }
-            System.out.println("" + Createuserpiclist);
 
-            try {
-                SimpleStatement cqlQuery = new SimpleStatement(Createuserpiclist);
-                session.execute(cqlQuery);
-            } catch (Exception et) {
-                System.out.println("Can't create user pic list table " + et);
-            }
             System.out.println("" + CreateAddressType);
             try {
                 SimpleStatement cqlQuery = new SimpleStatement(CreateAddressType);
@@ -74,13 +67,7 @@ public final class Keyspaces {
             } catch (Exception et) {
                 System.out.println("Can't create Address type " + et);
             }
-            System.out.println("" + CreateUserProfile);
-            try {
-                SimpleStatement cqlQuery = new SimpleStatement(CreateUserProfile);
-                session.execute(cqlQuery);
-            } catch (Exception et) {
-                System.out.println("Can't create Address Profile " + et);
-            }
+            
             session.close();
 
         } catch (Exception et) {

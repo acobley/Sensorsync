@@ -6,6 +6,8 @@
 package uk.ac.dundee.computing.aec.sensorsync;
 
 import com.datastax.driver.core.Cluster;
+import java.util.Iterator;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import uk.ac.dundee.computing.aec.sensorsync.lib.CassandraHosts;
 
@@ -23,7 +25,20 @@ public class SensorSaver {
         String sBuff= jsonstring.toString();
         JSONObject obj = new JSONObject(sBuff);
         String SensorName=obj.getJSONObject("SensorData").getString("name");
+        String InsertionTime=obj.getJSONObject("SensorData").getString("insertion_time");
         System.out.println("Sensor Name "+SensorName);
+        System.out.println("Insertion Time "+InsertionTime);
+        JSONArray arr = obj.getJSONArray("sensors");
+        for (int i = 0; i < arr.length(); i++){
+            JSONObject objA =arr.getJSONObject(i);
+            Iterator keys=objA.keys();
+            while (keys.hasNext()){
+                System.out.println("Keys "+keys.toString());
+                keys.next();
+            }
+            
+        }
+        
     }
             
     

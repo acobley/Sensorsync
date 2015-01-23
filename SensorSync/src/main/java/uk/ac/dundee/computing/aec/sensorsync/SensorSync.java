@@ -25,10 +25,12 @@ public class SensorSync {
     }
 
     private void start() {
-        Cluster cluster = CassandraHosts.getCluster();
+        
         try {
+            
             Thread t = new SensorServer(19877);
             t.run();
+          
 
         } catch (IOException et) {
             et.printStackTrace();

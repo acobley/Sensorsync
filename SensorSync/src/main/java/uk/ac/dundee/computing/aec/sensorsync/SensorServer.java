@@ -37,9 +37,21 @@ public class SensorServer extends Thread{
             serverSocket.getLocalPort() + "...");
             Socket server = serverSocket.accept();
             System.out.println("Just connected to "+ server.getRemoteSocketAddress());
+            
             DataInputStream in = new DataInputStream(server.getInputStream());
-            System.out.println(in.readUTF());
-
+            int iIn=0;
+            StringBuffer sBuff= new StringBuffer();
+            while (iIn >=0){
+                iIn = in.read();
+                char ch= (char)iIn;
+                System.out.print(ch);
+                sBuff.append(ch);
+                
+            }
+            
+            System.out.println(sBuff);
+            SensorSaver sv= new SensorSaver();
+            sv.Save(sBuff);
             server.close();
          }catch(SocketTimeoutException s)
          {   

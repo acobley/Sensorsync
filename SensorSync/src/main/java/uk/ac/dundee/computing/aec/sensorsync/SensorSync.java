@@ -3,8 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package uk.ac.dundee.computing.aec.sensorsync;
+
+import com.datastax.driver.core.Cluster;
+import java.io.IOException;
+import uk.ac.dundee.computing.aec.sensorsync.lib.CassandraHosts;
 
 /**
  *
@@ -17,6 +20,21 @@ public class SensorSync {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        SensorSync main = new SensorSync();
+        main.start();
     }
-    
+
+    private void start() {
+        Cluster cluster = CassandraHosts.getCluster();
+        try {
+            Thread t = new SensorServer(19877);
+            t.run();
+
+        } catch (IOException et) {
+            et.printStackTrace();
+            
+        }
+        System.exit(0);
+    }
+
 }

@@ -15,27 +15,19 @@ public final class Keyspaces {
         try {
             //Add some keyspaces here
             String createkeyspace = "create keyspace if not exists sensorsync  WITH replication = {'class':'SimpleStrategy', 'replication_factor':1}";
-            String CreatePicTable = "CREATE TABLE if not exists sensorsync.sensors ("
-                    + " user varchar,"
-                    + " picid uuid, "
-                    + " interaction_time timestamp,"
-                    + " title varchar,"
-                    + " image blob,"
-                    + " thumb blob,"
-                    + " processed blob,"
-                    + " imagelength int,"
-                    + " thumblength int,"
-                    + "  processedlength int,"
-                    + " type  varchar,"
-                    + " name  varchar,"
-                    + " PRIMARY KEY (picid)"
-                    + ")";
+            String CreateSensorTable = "Create table if not exists sensorsync.Sensors(\n" +
+"	name uuid,\n" +
+"	insertion_time timestamp,\n" +
+"	reading map <text,frozen<SensorReading>>,\n" +
+"	Primary Key (name,insertion_time)\n" +
+");";
             
-            String CreateAddressType = "CREATE TYPE if not exists instagrim.address (\n"
-                    + "      street text,\n"
-                    + "      city text,\n"
-                    + "      zip int\n"
-                    + "  );";
+            String CreateSensorType = "CREATE TYPE if not exists sensorsync.SensorReading (\n" +
+"	\n" +
+"	fValue	float,\n" +
+"	sValue	text,\n" +
+"	iValue  int\n" +
+");";
             
             Session session = c.connect();
             try {
@@ -45,28 +37,28 @@ public final class Keyspaces {
                         statement);
                 ResultSet rs = session
                         .execute(boundStatement);
-                System.out.println("created instagrim ");
+                System.out.println("created Sensorsync keyspace ");
             } catch (Exception et) {
-                System.out.println("Can't create instagrim " + et);
+                System.out.println("Can't create Sensorsync keyspace  " + et);
             }
-
+System.out.println("" + CreateSensorType);
+            try {
+                SimpleStatement cqlQuery = new SimpleStatement(CreateSensorType);
+                session.execute(cqlQuery);
+            } catch (Exception et) {
+                System.out.println("Can't create sensortype " + et);
+            }
             //now add some column families 
-            System.out.println("" + CreatePicTable);
+            System.out.println("" + CreateSensorTable);
 
             try {
-                SimpleStatement cqlQuery = new SimpleStatement(CreatePicTable);
+                SimpleStatement cqlQuery = new SimpleStatement(CreateSensorTable);
                 session.execute(cqlQuery);
             } catch (Exception et) {
-                System.out.println("Can't create tweet table " + et);
+                System.out.println("Can't create sensor  table " + et);
             }
 
-            System.out.println("" + CreateAddressType);
-            try {
-                SimpleStatement cqlQuery = new SimpleStatement(CreateAddressType);
-                session.execute(cqlQuery);
-            } catch (Exception et) {
-                System.out.println("Can't create Address type " + et);
-            }
+            
             
             session.close();
 

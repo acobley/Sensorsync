@@ -26,7 +26,7 @@ public final class Keyspaces {
 "	\n" +
 "	fValue	float,\n" +
 "	sValue	text,\n" +
-"	iValue  int\n" +
+"	iValue  int,\n" +
         "Accuracy float\n"+            
 ");";
             

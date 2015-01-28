@@ -27,6 +27,7 @@ public final class Keyspaces {
 "	fValue	float,\n" +
 "	sValue	text,\n" +
 "	iValue  int\n" +
+        "Accuracy float\n"+            
 ");";
             
             Session session = c.connect();

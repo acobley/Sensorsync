@@ -31,11 +31,20 @@ public class SensorSaver {
         JSONArray arr = obj.getJSONArray("sensors");
         for (int i = 0; i < arr.length(); i++){
             JSONObject objA =arr.getJSONObject(i);
+            String [] names=JSONObject.getNames(objA);
+            
+            for (int j=0; j<names.length;j++){
+                System.out.print("Name "+ names[j]+" ");
+                System.out.println(objA.getString(names[i]));
+                
+            }
+            /*
             Iterator keys=objA.keys();
             while (keys.hasNext()){
                 System.out.println("Keys "+keys.toString());
                 keys.next();
             }
+                    */
             
         }
         

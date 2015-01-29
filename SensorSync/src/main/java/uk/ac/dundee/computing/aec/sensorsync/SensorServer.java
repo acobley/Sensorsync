@@ -51,7 +51,9 @@ public class SensorServer extends Thread{
             
             System.out.println(sBuff);
             SensorSaver sv= new SensorSaver();
-            sv.Save(sBuff);
+            if (sv.Save(sBuff) == false){
+              this.stop();
+            }
             server.close();
          }catch(SocketTimeoutException s)
          {   

@@ -1,0 +1,25 @@
+{
+  "SensorData":{
+       "device":"5f388896-71c4-402c-b7c6-8610e305422f",
+       "insertion_time":"Wed Jan 28 15:54:29 GMT 2015"
+       },
+       "sensors": [
+          {
+          	"name":"Sensor1",
+          	"fValue":"20.1",
+          	"Accuracy":"90"
+          	},
+          	{
+          	"name":"Sensor2",
+          	"fValue":"20.2"
+          	},
+          	{
+          	"name":"Sensor3",
+          	"iValue":"80"
+          	},
+          	{
+          	"name":"Sensor4",
+          	"sValue":"HIGH!"
+          	}
+          	]
+          	}

@@ -8,12 +8,16 @@ package uk.ac.dundee.computing.aec.sensorsync;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.core.UserType;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
+
 import static java.time.Instant.now;
+import java.util.AbstractMap;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.UUID;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -58,15 +62,19 @@ public class SensorSaver {
         System.out.println("Device Name " + DeviceName);
         System.out.println("Insertion Time " + InsertionTime);
         JSONArray arr = obj.getJSONArray("sensors");
+        Map <String, UDTValue> mp = new HashMap<String, UDTValue>();
         for (int i = 0; i < arr.length(); i++) {
             JSONObject objA = arr.getJSONObject(i);
             String[] names = JSONObject.getNames(objA);
             System.out.println("Sensor: ");
-
+          
+            UDTValue sr;
+            sr = SensorReadingType.newValue();
+            String Name="";
             for (int j = 0; j < names.length; j++) {
                 System.out.print("Name " + names[j] + " ");
                 System.out.println(objA.getString(names[j]));
-
+                
                 int command;
                 try {
                     command = (Integer) CommandsMap.get(names[j]);
@@ -75,48 +83,97 @@ public class SensorSaver {
                     return false;
                 }
                 switch (command) {
-            case 1:
-                
-                addFloat(names,j,SensorReadingType);
-                break;
-            
-            default:
-                error("Bad Operator");
-        }
+                    case 1:
+
+                        addFloat(objA.getString(names[j]), sr);
+                        break;
+                    case 2:
+                         addInt(objA.getString(names[j]), sr);
+                        break;
+                    case 3:
+                         addString(objA.getString(names[j]), sr);
+                        break;
+                    case 4:
+                        addAccuracy(objA.getString(names[j]), sr);
+                        break;
+                    case 5:
+                        Name=objA.getString(names[j]);
+                        break;
+                    default:
+                        error("Bad Operator");
+                }
+                mp.put(Name, sr);
             }
 
             Statement statement = QueryBuilder.insertInto("sensorsync", "Sensors")
                     .value("name", dUuid)
-                    .value("insertion_time", dd);
+                    .value("insertion_time", dd)
+                    .value("reading",mp);
             getSession().execute(statement);
-            /*
-             Iterator keys=objA.keys();
-             while (keys.hasNext()){
-             System.out.println("Keys "+keys.toString());
-             keys.next();
-             }
-             */
+
 
         }
         return true;
     }
- 
-    private void addFloat(String[] names, int j,UserType SensorReadingType) {
-        if ((j+1) < names.length){ 
-            j++;
-            String sFloat=names[j];
+
+    private boolean addFloat(String Value, UDTValue sr) {
+      
+            String sFloat = Value;
             float value;
-            value = Float.parseFloat(sFloat);
-            
-            
-        }
-        
+            try {
+                value = Float.parseFloat(sFloat);
+            } catch (NumberFormatException et) {
+                return false;
+            }
+
+            sr.setFloat("fValue", value);
+
+        return true;
+
     }
     
+    private boolean addAccuracy(String Value, UDTValue sr) {
+      
+            String sFloat = Value;
+            float value;
+            try {
+                value = Float.parseFloat(sFloat);
+            } catch (NumberFormatException et) {
+                return false;
+            }
+
+            sr.setFloat("Accuracy", value);
+
+        return true;
+
+    }
+    
+    private boolean addInt(String Value, UDTValue sr) {
+           int value;
+            try {
+                value = Integer.parseInt(Value);
+                
+            } catch (NumberFormatException et) {
+                return false;
+            }
+
+            sr.setInt("iValue", value);
+
+        return true;
+
+    }
+
+    private boolean addString(String Value, UDTValue sr) {
+          
+            sr.setString("sValue", Value);
+
+        return true;
+
+    }
     private void error(String mess) {
 
-        System.out.println("<h1>You have a na error in your input</h1>");
-        System.out.println("<h2>" + mess + "</h2>");
+        System.out.println("You have a na error in your input");
+        System.out.println("" + mess + "");
         System.out.close();
         return;
     }

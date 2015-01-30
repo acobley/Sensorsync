@@ -21,7 +21,7 @@ public class Sensor {
     float fMax = (float) 100.0;
 
     public void Sensor() {
-
+        //See http://www.tutorialspoint.com/java/util/random_nextboolean.htm
         Random randomno = new Random();
         type = randomno.nextInt(2) + 1;
         addAccuracy = randomno.nextBoolean();

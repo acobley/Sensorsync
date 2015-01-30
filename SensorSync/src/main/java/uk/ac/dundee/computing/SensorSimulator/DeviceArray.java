@@ -5,6 +5,9 @@
  */
 package uk.ac.dundee.computing.SensorSimulator;
 
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -63,6 +66,19 @@ public class DeviceArray {
        
         
         System.out.println(json.toString());
+        Socket sc=null;
+        try{
+           sc = new Socket("127.0.0.1",19877);
+            OutputStream os = sc.getOutputStream();
+            PrintWriter out = new PrintWriter(os);
+            out.print(json);
+            out.close();
+            sc.close();
+        }catch (Exception et){
+            System.out.println("No Host");
+        }
+       
+        
     }
 
 }

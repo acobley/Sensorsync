@@ -19,10 +19,11 @@ public class Sensor {
     int iMax = 100;
     float fMin = (float) 0.0;
     float fMax = (float) 100.0;
-
-    public void Sensor() {
+    Random randomno = new Random();
+    String name;
+    public Sensor() {
         //See http://www.tutorialspoint.com/java/util/random_nextboolean.htm
-        Random randomno = new Random();
+
         type = randomno.nextInt(2) + 1;
         addAccuracy = randomno.nextBoolean();
         switch (type) {
@@ -37,7 +38,36 @@ public class Sensor {
             default:
                 break;
         }
+    }
 
+    
+    public void setName(String Name){
+        this.name=Name;
+    }
+    public int getType() {
+        return type;
+    }
+
+    public Object getValue() {
+        switch (type) {
+            case 1:
+                float fvalue = fMin + (float) randomno.nextInt((int) fMax);
+                Float fValue = new Float(fvalue);
+                return fValue;
+
+            case 2:
+                int ivalue = iMin + randomno.nextInt(iMax);
+                Integer iValue = new Integer(ivalue);
+                return iValue;
+
+            default:
+                break;
+        }
+        return null;
+    }
+    
+    public String getName(){
+        return name;
     }
 
 }

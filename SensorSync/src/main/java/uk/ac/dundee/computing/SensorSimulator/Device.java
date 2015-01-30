@@ -5,6 +5,7 @@
  */
 package uk.ac.dundee.computing.SensorSimulator;
 
+import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
 
@@ -17,13 +18,27 @@ public class Device {
     Sensor sensors[];
     UUID Devicename= UUID.randomUUID();
     
-    public void Device(){
+    public Device(){
         Random randomno = new Random();
         numberofsensors=randomno.nextInt(100);
         sensors = new Sensor[numberofsensors];
         for (int i=0; i<sensors.length;i++){
             sensors[i]= new Sensor();
+            sensors[i].setName("Sensor"+i);
         }
     }
     
+    public UUID getDevice(){
+        return Devicename;
+    }
+    
+    public Date getInsertion_time(){
+        return new Date();
+    }
+    
+    public Sensor[] getSensors(){
+        return sensors;
+    }
 }
+    
+

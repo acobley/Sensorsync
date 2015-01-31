@@ -34,10 +34,8 @@ public class SensorSaver {
     UserType SensorReadingType = null;
     private final HashMap CommandsMap = new HashMap();
 
-    public SensorSaver() {
-        cluster = CassandraHosts.getCluster();
-
-        session = cluster.connect();
+    public SensorSaver(Cluster cluster,Session session) {
+        this.session=session;
         SensorReadingType = cluster.getMetadata().getKeyspace("sensorsync").getUserType("SensorReading");
         CommandsMap.put("fValue", 1);
         CommandsMap.put("iValue", 2);
@@ -59,21 +57,21 @@ public class SensorSaver {
         String InsertionTime = obj.getJSONObject("SensorData").getString("insertion_time");
         Date dd = new Date(InsertionTime);
 
-        System.out.println("Device Name " + DeviceName);
-        System.out.println("Insertion Time " + InsertionTime);
+        //System.out.println("Device Name " + DeviceName);
+        //System.out.println("Insertion Time " + InsertionTime);
         JSONArray arr = obj.getJSONArray("sensors");
         Map<String, UDTValue> mp = new HashMap<String, UDTValue>();
         for (int i = 0; i < arr.length(); i++) {
             JSONObject objA = arr.getJSONObject(i);
             String[] names = JSONObject.getNames(objA);
-            System.out.println("Sensor: ");
+            //System.out.println("Sensor: ");
 
             UDTValue sr;
             sr = SensorReadingType.newValue();
             String Name = "";
             for (int j = 0; j < names.length; j++) {
-                System.out.print("Name " + names[j] + " ");
-                System.out.println(objA.getString(names[j]));
+                //System.out.print("Name " + names[j] + " ");
+                //System.out.println(objA.getString(names[j]));
 
                 int command;
                 try {
@@ -111,6 +109,7 @@ public class SensorSaver {
                     .value("insertion_time", dd)
                     .value("reading", mp);
             getSession().execute(statement);
+            System.out.print(".");
         return true;
     }
 

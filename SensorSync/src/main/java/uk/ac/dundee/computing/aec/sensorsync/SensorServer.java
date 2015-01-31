@@ -5,12 +5,15 @@
  */
 package uk.ac.dundee.computing.aec.sensorsync;
 
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.Session;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import uk.ac.dundee.computing.aec.sensorsync.lib.CassandraHosts;
 
 /**
  *
@@ -29,14 +32,16 @@ public class SensorServer extends Thread{
     
    public void run() 
    {
+      Cluster cluster = CassandraHosts.getCluster();
+
+      Session  session = cluster.connect(); 
       while(true)
       {
          try
          {
-            System.out.println("Waiting for client on port " +
-            serverSocket.getLocalPort() + "...");
+            //System.out.println("Waiting for client on port " +serverSocket.getLocalPort() + "...");
             Socket server = serverSocket.accept();
-            System.out.println("Just connected to "+ server.getRemoteSocketAddress());
+            //System.out.println("Just connected to "+ server.getRemoteSocketAddress());
             
             DataInputStream in = new DataInputStream(server.getInputStream());
             int iIn=0;
@@ -44,13 +49,13 @@ public class SensorServer extends Thread{
             while (iIn >=0){
                 iIn = in.read();
                 char ch= (char)iIn;
-                System.out.print(ch);
+                //System.out.print(ch);
                 sBuff.append(ch);
                 
             }
             
-            System.out.println(sBuff);
-            SensorSaver sv= new SensorSaver();
+            //System.out.println(sBuff);
+            SensorSaver sv= new SensorSaver(cluster,session);
             if (sv.Save(sBuff) == false){
               this.stop();
             }

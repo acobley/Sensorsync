@@ -21,14 +21,17 @@ public class DeviceThread extends Thread {
     Device dd = new Device();
     boolean running =false;
     public DeviceThread() {
+        super();
         running=true;
 
     }
     public void interupt(){
+        
         running =false;
     }
     public void run()  {
-        while (running) {
+        //while (running) {
+        for (int Count=0; Count<1000;Count++){
             Sensor sensors[] = dd.getSensors();
             JSONArray jsonSensors = new JSONArray();
             JSONObject Record = null;
@@ -63,7 +66,7 @@ public class DeviceThread extends Thread {
             json.put("sensors", jsonSensors);
             json.put("SensorData", jsonDevice);
 
-            //System.out.println(json.toString());
+            System.out.println(dd.getDevice());
             Socket sc = null;
             try {
                 sc = new Socket("89.200.141.108", 19877);
@@ -75,6 +78,14 @@ public class DeviceThread extends Thread {
             } catch (Exception et) {
                 System.out.println("No Host");
             }
+            try{
+                //System.out.println("Sleeping");
+                Thread.sleep((long)0,100);
+                Thread.yield();
+            }catch (Exception et){
+                System.out.println("Sleep went wrong");
+            }
+            
         }
         
 

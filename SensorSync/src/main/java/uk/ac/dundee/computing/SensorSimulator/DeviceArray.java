@@ -53,11 +53,16 @@ public class DeviceArray {
     public void createThreads() {
         for (int i = 0; i < 100; i++) {
             try {
-
                 t[i] = new DeviceThread();
-                t[i].run();
-                
+            } catch (Exception et) {
+                et.printStackTrace();
 
+            }
+        }
+        for (int i = 0; i < 100; i++) {
+            try {
+                //t[i].run();
+                t[i].start();
             } catch (Exception et) {
                 et.printStackTrace();
 

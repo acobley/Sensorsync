@@ -3,6 +3,14 @@
        "device":"5f388896-71c4-402c-b7c6-8610e305422f",
        "insertion_time":"Wed Jan 28 15:54:29 GMT 2015"
        },
+       "meta":
+       {
+          "name":"Andy",
+          "latitude":"56.4233156",
+          "longitude":"-2.9754031"
+       }
+      
+       
        "sensors": [
           {
           	"name":"Sensor1",

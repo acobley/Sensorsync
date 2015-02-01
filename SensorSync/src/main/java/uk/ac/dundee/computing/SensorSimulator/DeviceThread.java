@@ -66,7 +66,7 @@ public class DeviceThread extends Thread {
             json.put("sensors", jsonSensors);
             json.put("SensorData", jsonDevice);
 
-            System.out.println(dd.getDevice());
+            //System.out.println(dd.getDevice());
             Socket sc = null;
             try {
                 sc = new Socket("89.200.141.108", 19877);

@@ -8,7 +8,7 @@
           "name":"Andy",
           "latitude":"56.4233156",
           "longitude":"-2.9754031"
-       }
+       },
       
        
        "sensors": [

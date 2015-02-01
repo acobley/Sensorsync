@@ -59,6 +59,20 @@ public class SensorSaver {
 
         //System.out.println("Device Name " + DeviceName);
         //System.out.println("Insertion Time " + InsertionTime);
+        JSONObject jsonMeta=obj.getJSONObject("meta");
+        Map<String,String> Meta = new HashMap<String,String>();
+        String[] metaNames = JSONObject.getNames(jsonMeta);
+        for (int j = 0; j < metaNames.length; j++) {
+            String Name=metaNames[j];
+            String Value=null;
+            if (metaNames[j+1]!=null){
+                Value=metaNames[j+1];
+            }
+            Meta.put(Name, Value);
+            System.out.println(Name+":"+Value);
+            j++;
+        }
+        
         JSONArray arr = obj.getJSONArray("sensors");
         Map<String, UDTValue> mp = new HashMap<String, UDTValue>();
         for (int i = 0; i < arr.length(); i++) {

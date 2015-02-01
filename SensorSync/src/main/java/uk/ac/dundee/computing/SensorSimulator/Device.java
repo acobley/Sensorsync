@@ -6,6 +6,8 @@
 package uk.ac.dundee.computing.SensorSimulator;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
@@ -17,6 +19,7 @@ public class Device {
     int numberofsensors=0;
     Sensor sensors[];
     UUID Devicename= UUID.randomUUID();
+    Map<String,String> meta=new HashMap<String,String>();
     
     public Device(){
         Random randomno = new Random();
@@ -26,6 +29,7 @@ public class Device {
             sensors[i]= new Sensor();
             sensors[i].setName("Sensor"+i);
         }
+        int numMeta=randomno.nextInt(10);
     }
     
     public UUID getDevice(){

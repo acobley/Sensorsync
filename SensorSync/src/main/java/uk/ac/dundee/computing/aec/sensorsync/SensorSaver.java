@@ -34,8 +34,8 @@ public class SensorSaver {
     UserType SensorReadingType = null;
     private final HashMap CommandsMap = new HashMap();
 
-    public SensorSaver(Cluster cluster,Session session) {
-        this.session=session;
+    public SensorSaver(Cluster cluster, Session session) {
+        this.session = session;
         SensorReadingType = cluster.getMetadata().getKeyspace("sensorsync").getUserType("SensorReading");
         CommandsMap.put("fValue", 1);
         CommandsMap.put("iValue", 2);
@@ -59,20 +59,21 @@ public class SensorSaver {
 
         //System.out.println("Device Name " + DeviceName);
         //System.out.println("Insertion Time " + InsertionTime);
-        JSONObject jsonMeta=obj.getJSONObject("meta");
-        Map<String,String> Meta = new HashMap<String,String>();
-        String[] metaNames = JSONObject.getNames(jsonMeta);
-        for (int j = 0; j < metaNames.length; j++) {
-            String Name=metaNames[j];
-            String Value=null;
-            if (metaNames[j+1]!=null){
-                Value=metaNames[j+1];
+        JSONObject jsonMeta = obj.getJSONObject("meta");
+        Map<String, String> Meta =null;
+        if (jsonMeta != null) {
+            Meta = new HashMap<String, String>();
+            String[] metaNames = JSONObject.getNames(jsonMeta);
+            System.out.println("" + metaNames);
+            for (int j = 0; j < metaNames.length; j++) {
+                String Name = metaNames[j];
+                String Value = jsonMeta.getString(Name);
+                
+                Meta.put(Name, Value);
+                System.out.println(Name + ":" + Value);
+              
             }
-            Meta.put(Name, Value);
-            System.out.println(Name+":"+Value);
-            j++;
         }
-        
         JSONArray arr = obj.getJSONArray("sensors");
         Map<String, UDTValue> mp = new HashMap<String, UDTValue>();
         for (int i = 0; i < arr.length(); i++) {
@@ -113,17 +114,20 @@ public class SensorSaver {
                     default:
                         error("Bad Operator");
                 }
-                
+
             }
             mp.put(Name, sr);
 
         }
-                    Statement statement = QueryBuilder.insertInto("sensorsync", "Sensors")
-                    .value("name", dUuid)
-                    .value("insertion_time", dd)
-                    .value("reading", mp);
-            getSession().execute(statement);
-            System.out.print(".");
+        Statement statement= QueryBuilder.insertInto("sensorsync", "Sensors")
+                .value("name", dUuid)
+                .value("insertion_time", dd)
+                .value("metadata", Meta)
+                .value("reading", mp);
+               
+ 
+        getSession().execute(statement);
+        System.out.print(".");
         return true;
     }
 

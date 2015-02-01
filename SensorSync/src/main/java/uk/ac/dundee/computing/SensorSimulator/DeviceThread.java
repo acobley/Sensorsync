@@ -20,10 +20,15 @@ public class DeviceThread extends Thread {
 
     Device dd = new Device();
     boolean running =false;
+    String ip="127.0.0.1";
     public DeviceThread() {
         super();
         running=true;
 
+    }
+    
+    public void setIP(String ip){
+        this.ip=ip;
     }
     public void interupt(){
         
@@ -31,7 +36,7 @@ public class DeviceThread extends Thread {
     }
     public void run()  {
         //while (running) {
-        for (int Count=0; Count<1000;Count++){
+        for (int Count=0; Count<100;Count++){
             Sensor sensors[] = dd.getSensors();
             JSONArray jsonSensors = new JSONArray();
             JSONObject Record = null;
@@ -71,7 +76,7 @@ public class DeviceThread extends Thread {
             boolean sent=false;
             while (sent == false){
             try {
-                sc = new Socket("89.200.141.108", 19877);
+                sc = new Socket(ip, 19877);
                 OutputStream os = sc.getOutputStream();
                 PrintWriter out = new PrintWriter(os);
                 out.print(json);
@@ -79,7 +84,7 @@ public class DeviceThread extends Thread {
                 sc.close();
                 sent = true;
             } catch (Exception et) {
-                System.out.println("No Host "+dd.getDevice());
+                System.out.println("No Host "+dd.getDevice() +" : "+ip);
                 try{
                  Thread.sleep((long)1);
                 }catch(Exception et1){

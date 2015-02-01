@@ -18,9 +18,14 @@ import org.json.JSONObject;
  */
 public class DeviceArray {
     Thread t[]= new Thread[100];
+    static String ip;
     public static void main(String[] args) {
         // TODO code application logic here
         final DeviceArray  main = new DeviceArray();
+        if (args.length>0){
+            ip=args[1];
+        }
+        
         //http://stackoverflow.com/questions/2541475/capture-sigint-in-java
         Runtime.getRuntime().addShutdownHook(new Thread()
         {

@@ -18,6 +18,7 @@ public final class Keyspaces {
             String CreateSensorTable = "Create table if not exists sensorsync.Sensors(\n" +
 "	name uuid,\n" +
 "	insertion_time timestamp,\n" +
+"	metadata map <text,text>,\n" +
 "	reading map <text,frozen<SensorReading>>,\n" +
 "	Primary Key (name,insertion_time)\n" +
 ");";

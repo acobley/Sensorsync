@@ -68,6 +68,8 @@ public class DeviceThread extends Thread {
 
             //System.out.println(dd.getDevice());
             Socket sc = null;
+            boolean sent=false;
+            while (sent == false){
             try {
                 sc = new Socket("89.200.141.108", 19877);
                 OutputStream os = sc.getOutputStream();
@@ -75,8 +77,15 @@ public class DeviceThread extends Thread {
                 out.print(json);
                 out.close();
                 sc.close();
+                sent = true;
             } catch (Exception et) {
-                System.out.println("No Host");
+                System.out.println("No Host "+dd.getDevice());
+                try{
+                 Thread.sleep((long)1);
+                }catch(Exception et1){
+                    System.out.println("Cant sleep "+et);
+                }
+            }
             }
             try{
                 //System.out.println("Sleeping");

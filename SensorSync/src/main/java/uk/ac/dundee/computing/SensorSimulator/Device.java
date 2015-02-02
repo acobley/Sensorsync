@@ -30,6 +30,7 @@ public class Device {
             sensors[i].setName("Sensor"+i);
         }
         int numMeta=randomno.nextInt(10);
+        //to do finish writing metadata
     }
     
     public UUID getDevice(){

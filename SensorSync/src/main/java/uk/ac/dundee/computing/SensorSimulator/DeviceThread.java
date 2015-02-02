@@ -37,6 +37,9 @@ public class DeviceThread extends Thread {
     public void run()  {
         //while (running) {
         for (int Count=0; Count<100;Count++){
+            if (Count %10 ==0){
+                System.out.println(Count);
+            }
             Sensor sensors[] = dd.getSensors();
             JSONArray jsonSensors = new JSONArray();
             JSONObject Record = null;

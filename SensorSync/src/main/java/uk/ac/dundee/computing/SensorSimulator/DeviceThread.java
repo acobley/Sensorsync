@@ -21,10 +21,11 @@ public class DeviceThread extends Thread {
     Device dd = new Device();
     boolean running =false;
     String ip="127.0.0.1";
-    public DeviceThread() {
+    public DeviceThread(String ip) {
         super();
+        this.ip=ip;
         running=true;
-
+    
     }
     
     public void setIP(String ip){
@@ -38,7 +39,7 @@ public class DeviceThread extends Thread {
         //while (running) {
         for (int Count=0; Count<100;Count++){
             if (Count %10 ==0){
-                System.out.println(Count);
+                System.out.println(dd.getDevice()+" : "+Count);
             }
             Sensor sensors[] = dd.getSensors();
             JSONArray jsonSensors = new JSONArray();

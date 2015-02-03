@@ -22,8 +22,13 @@ public class DeviceArray {
     public static void main(String[] args) {
         // TODO code application logic here
         final DeviceArray  main = new DeviceArray();
-        if (args.length>0){
-            ip=args[1];
+        System.out.println(args.length);
+        for (int i =0; i <args.length;i++){
+            System.out.println(args[i]);
+        }
+        if (args.length>=0){
+            ip=args[0];
+            
         }
         
         //http://stackoverflow.com/questions/2541475/capture-sigint-in-java
@@ -58,7 +63,8 @@ public class DeviceArray {
     public void createThreads() {
         for (int i = 0; i < 100; i++) {
             try {
-                t[i] = new DeviceThread();
+                t[i] = new DeviceThread(ip);
+                
             } catch (Exception et) {
                 et.printStackTrace();
 

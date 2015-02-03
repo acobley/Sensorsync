@@ -23,7 +23,7 @@ public class Device {
     
     public Device(){
         Random randomno = new Random();
-        numberofsensors=randomno.nextInt(100);
+        numberofsensors=randomno.nextInt(20);
         sensors = new Sensor[numberofsensors];
         for (int i=0; i<sensors.length;i++){
             sensors[i]= new Sensor();

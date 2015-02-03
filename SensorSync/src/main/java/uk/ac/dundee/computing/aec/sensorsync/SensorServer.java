@@ -10,6 +10,7 @@ import com.datastax.driver.core.Session;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -34,10 +35,15 @@ public class SensorServer extends Thread {
 
     private ServerSocket serverSocket;
     private int port = 0;
+    private String ListenAddress ="127.0.0.1";
 
     public SensorServer(int port) throws IOException {
         //serverSocket = new ServerSocket(port);
         this.port = port;
+        InetAddress address=InetAddress.getLocalHost();
+        System.out.println("Address = "+address.getHostAddress());
+        ListenAddress=address.getHostAddress();
+        
         //serverSocket.setSoTimeout(50000);
 
     }
@@ -57,7 +63,7 @@ public class SensorServer extends Thread {
         }
         
         try {
-            server.socket().bind(new java.net.InetSocketAddress("127.0.0.1", port));
+            server.socket().bind(new java.net.InetSocketAddress(ListenAddress, port));
 
         } catch (Exception et) {
             System.out.println("Can't bind to port " + port);

@@ -32,6 +32,7 @@ public class SensorSaver {
     Cluster cluster = null;
     Session session = null;
     UserType SensorReadingType = null;
+    int DataCount=0;
     private final HashMap CommandsMap = new HashMap();
 
     public SensorSaver(Cluster cluster, Session session) {
@@ -132,7 +133,11 @@ public class SensorSaver {
                
  
         getSession().execute(statement);
-        System.out.print(".");
+        DataCount++;
+        if (DataCount % 100==0){
+            System.out.println(DataCount);
+        }
+        //System.out.print(".");
         return true;
     }
 

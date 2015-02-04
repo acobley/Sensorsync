@@ -145,7 +145,8 @@ public class SensorServer extends Thread {
                 }
 
             }catch(Exception et){
-                System.out.println("Opps somethign went wrong !"+et);
+                System.out.println("Opps something went wrong !"+et);
+                et.printStackTrace();
             }
         }
     }

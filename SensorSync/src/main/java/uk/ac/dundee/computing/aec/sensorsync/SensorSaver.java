@@ -51,6 +51,7 @@ public class SensorSaver {
 
     public boolean Save(StringBuffer jsonstring) {
         String sBuff = jsonstring.toString();
+        //System.out.println(sBuff);
         JSONObject obj = new JSONObject(sBuff);
         String DeviceName = obj.getJSONObject("SensorData").getString("device");
         UUID dUuid = java.util.UUID.fromString(DeviceName);
@@ -137,7 +138,7 @@ public class SensorSaver {
         if (DataCount % 100==0){
             System.out.println(DataCount);
         }
-        //System.out.print(".");
+        System.out.print(".");
         return true;
     }
 

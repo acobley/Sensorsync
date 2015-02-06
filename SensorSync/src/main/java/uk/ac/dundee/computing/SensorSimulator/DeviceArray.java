@@ -18,15 +18,14 @@ import org.json.JSONObject;
  */
 public class DeviceArray {
     Thread t[]= new Thread[100];
-    static String ip;
+    static String ip="127.0.0.1";
+    static int Threads=100;
     public static void main(String[] args) {
         // TODO code application logic here
         final DeviceArray  main = new DeviceArray();
         System.out.println(args.length);
-        for (int i =0; i <args.length;i++){
-            System.out.println(args[i]);
-        }
-        if (args.length>=0){
+
+        if (args.length!=0){
             ip=args[0];
             
         }
@@ -46,7 +45,7 @@ public class DeviceArray {
     }
     
     public void destroyThreads() {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < Threads; i++) {
             try {
 
                
@@ -61,7 +60,7 @@ public class DeviceArray {
     }
     
     public void createThreads() {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < Threads; i++) {
             try {
                 t[i] = new DeviceThread(ip);
                 
@@ -70,7 +69,7 @@ public class DeviceArray {
 
             }
         }
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < Threads; i++) {
             try {
                 //t[i].run();
                 t[i].start();

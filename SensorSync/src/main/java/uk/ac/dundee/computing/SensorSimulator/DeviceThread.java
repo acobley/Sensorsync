@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -39,7 +42,7 @@ public class DeviceThread extends Thread {
         //while (running) {
         for (int Count=0; Count<100;Count++){
             if (Count %10 ==0){
-                System.out.println(dd.getDevice()+" : "+Count);
+                System.out.println(dd.getDevice()+" : "+Count+ " :: "+ip);
             }
             Sensor sensors[] = dd.getSensors();
             JSONArray jsonSensors = new JSONArray();
@@ -71,9 +74,17 @@ public class DeviceThread extends Thread {
             JSONObject jsonDevice = new JSONObject();
             jsonDevice.put("device", dd.getDevice());
             jsonDevice.put("insertion_time", dd.getInsertion_time());
+            JSONObject jsonMeta=new JSONObject();
+            Map<String,String> meta = dd.getMeta();
+            for (Map.Entry<String,String> entry : meta.entrySet()) {
+                jsonMeta.put(entry.getKey(),entry.getValue());
+            }
+
+
             JSONObject json = new JSONObject();
             json.put("sensors", jsonSensors);
             json.put("SensorData", jsonDevice);
+            json.put("meta",jsonMeta);
 
             //System.out.println(dd.getDevice());
             Socket sc = null;

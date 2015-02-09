@@ -21,10 +21,14 @@ public class Sensor {
     float fMax = (float) 100.0;
     Random randomno = new Random();
     String name;
+    String sValues[][]={{"High","Low"},{"Ok","Warning","Danger"},
+        {"Slow","OK","Fast"},{"Slip","Spill","Misaligned"}
+    };
+    int sValueType;
     public Sensor() {
         //See http://www.tutorialspoint.com/java/util/random_nextboolean.htm
 
-        type = randomno.nextInt(2) + 1;
+        type = randomno.nextInt(3) + 1;
         addAccuracy = randomno.nextBoolean();
         switch (type) {
             case 1:
@@ -34,6 +38,10 @@ public class Sensor {
             case 2:
                 iMin = randomno.nextInt(50);
                 iMax = randomno.nextInt(1000) + iMin;
+                break;
+            case 3:
+                int iL=sValues.length;
+                sValueType=randomno.nextInt(iL);
                 break;
             default:
                 break;
@@ -59,7 +67,10 @@ public class Sensor {
                 int ivalue = iMin + randomno.nextInt(iMax);
                 Integer iValue = new Integer(ivalue);
                 return iValue;
-
+            case 3:
+                int iL= sValues[sValueType].length;
+                int riL=randomno.nextInt(iL);
+                return sValues[sValueType][riL];
             default:
                 break;
         }

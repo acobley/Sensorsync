@@ -64,6 +64,8 @@ public class DeviceThread extends Thread {
                         //System.out.println(sensors[i].getName() + ":" + iValue);
                         Record.put("iValue", iValue.toString());
                         break;
+                    case 3:
+                        Record.put("sValue",(String)value);
                     default:
                         //System.out.println("Type" + type);
                         break;

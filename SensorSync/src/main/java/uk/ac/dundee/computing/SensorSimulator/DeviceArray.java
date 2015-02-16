@@ -17,9 +17,10 @@ import org.json.JSONObject;
  * @author Administrator
  */
 public class DeviceArray {
-    Thread t[]= new Thread[100];
-    static String ip="127.0.0.1";
     static int Threads=100;
+    Thread t[]= new Thread[Threads];
+    static String ip="127.0.0.1";
+    
     public static void main(String[] args) {
         // TODO code application logic here
         final DeviceArray  main = new DeviceArray();

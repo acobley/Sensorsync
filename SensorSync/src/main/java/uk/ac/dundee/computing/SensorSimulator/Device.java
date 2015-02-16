@@ -530,9 +530,13 @@ public class Device {
 			"Sale",
 			"Salford",
 			"Shaw and Crompton"};
+    String Make[]={"Airpi","Spark shield","Sparkfun", "Ar-fun"};
+    
+    String Model[]={"A","B","DEV-1208"};
+    String EqType[]={"Pyranometer","Gyroscopic"};
     public Device(){
         Random randomno = new Random();
-        numberofsensors=randomno.nextInt(20);
+        numberofsensors=randomno.nextInt(50);
         sensors = new Sensor[numberofsensors];
         for (int i=0; i<sensors.length;i++){
             sensors[i]= new Sensor();
@@ -548,6 +552,15 @@ public class Device {
 	meta.put("Latitude", ""+lat);
         meta.put("Longitude",""+lng);
         //to do finish writing metadata
+        if (randomno.nextBoolean()==true){
+            meta.put("Make", Make[randomno.nextInt(Make.length-1)]);
+        }
+        if (randomno.nextBoolean()==true){
+            meta.put("Model", Model[randomno.nextInt(Model.length-1)]);
+        }
+        if (randomno.nextBoolean()==true){
+            meta.put("eqType", EqType[randomno.nextInt(EqType.length-1)]);
+        }
     }
     
     public UUID getDevice(){

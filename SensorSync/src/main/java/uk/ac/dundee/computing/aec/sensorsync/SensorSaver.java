@@ -11,6 +11,7 @@ import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.core.UserType;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
+import java.text.SimpleDateFormat;
 
 import static java.time.Instant.now;
 import java.util.AbstractMap;
@@ -20,6 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import uk.ac.dundee.computing.aec.sensorsync.lib.CassandraHosts;
 
@@ -57,8 +59,22 @@ public class SensorSaver {
         UUID dUuid = java.util.UUID.fromString(DeviceName);
 
         String InsertionTime = obj.getJSONObject("SensorData").getString("insertion_time");
-        Date dd = new Date(InsertionTime);
-
+        Date dd=null;
+        try{
+            dd = new Date(InsertionTime);
+        }catch (IllegalArgumentException et){
+            //Must not be Java format, try python
+            String pDateFormat="yyyy-MM-dd HH:mm:ss";
+            int dot=InsertionTime.lastIndexOf(".");
+            String trimmed=InsertionTime.substring(0, dot);
+            SimpleDateFormat formatter = new SimpleDateFormat(pDateFormat);
+            try {
+                dd= formatter.parse(InsertionTime);
+            }catch (Exception etp){
+                System.out.println("Can't parse Python Date "+etp);
+                return false;
+            }
+        }
         //System.out.println("Device Name " + DeviceName);
         //System.out.println("Insertion Time " + InsertionTime);
         JSONObject jsonMeta=null;
@@ -104,7 +120,11 @@ public class SensorSaver {
                 }
                 switch (command) {
                     case 1:
-                        addFloat(objA.getString(names[j]), sr);
+                        try {
+                            addFloat(objA.getString(names[j]), sr);
+                        }catch (JSONException et){
+                            addFloat(objA.getDouble(names[j]), sr);
+                        }
                         break;
                     case 2:
                         addInt(objA.getString(names[j]), sr);
@@ -153,6 +173,14 @@ public class SensorSaver {
         }
 
         sr.setFloat("fValue", value);
+
+        return true;
+
+    }
+    private boolean addFloat(double Value, UDTValue sr) {
+
+
+        sr.setFloat("fValue", (float)Value);
 
         return true;
 

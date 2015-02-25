@@ -136,8 +136,11 @@ public class SensorServer extends Thread {
                         CharBuffer charBuffer = decoder.decode(buffer);
                        
                         buff.append(charBuffer);
-                        if (buff.length() > 2) {
-                            System.out.println(buff);
+                        if (charBuffer.length() > 0) {
+                            System.out.println();
+                            System.out.println("----------------------------------------------");
+                            System.out.println("buff "+buff.length()+" : "+buff);
+                            System.out.println("charBuffer "+charBuffer.length()+" : "+charBuffer);
                             SensorSaver sv = new SensorSaver(cluster, session);
                             if (sv.Save(buff) == false) {
                                 this.stop();

@@ -152,11 +152,12 @@ public class SensorSaver {
                 .value("metadata", Meta)
                 .value("reading", mp);
                
- 
+        System.out.println("Insetion Statement "+dUuid+" : "+dd );
         getSession().execute(statement);
         DataCount++;
-        if (DataCount % 100==0){
+        if (DataCount == 100){
             System.out.println(DataCount);
+            DataCount=0;
         }
         System.out.print(".");
         return true;

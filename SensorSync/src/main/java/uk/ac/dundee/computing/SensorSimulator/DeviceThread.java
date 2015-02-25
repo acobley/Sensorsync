@@ -24,10 +24,31 @@ public class DeviceThread extends Thread {
     Device dd = new Device();
     boolean running =false;
     String ip="127.0.0.1";
+    long Millis=1;
+    int readingCount=100;
+    
+    public DeviceThread(String ip,long Millis) {
+        super();
+        this.ip=ip;
+        running=true;
+        this.Millis=Millis;
+    
+    }
+    
+    public DeviceThread(String ip,long Millis,int Count) {
+        super();
+        this.ip=ip;
+        running=true;
+        this.Millis=Millis;
+        this.readingCount=Count;
+    
+    }
+    
     public DeviceThread(String ip) {
         super();
         this.ip=ip;
         running=true;
+        this.Millis=Millis;
     
     }
     
@@ -40,7 +61,7 @@ public class DeviceThread extends Thread {
     }
     public void run()  {
         //while (running) {
-        for (int Count=0; Count<100;Count++){
+        for (int Count=0; Count<readingCount;Count++){
             if (Count %10 ==0){
                 System.out.println(dd.getDevice()+" : "+Count+ " :: "+ip);
             }
@@ -103,7 +124,7 @@ public class DeviceThread extends Thread {
             } catch (Exception et) {
                 System.out.println("No Host "+dd.getDevice() +" : "+ip);
                 try{
-                 Thread.sleep((long)1);
+                 Thread.sleep((long)1000);
                 }catch(Exception et1){
                     System.out.println("Cant sleep "+et);
                 }
@@ -111,7 +132,7 @@ public class DeviceThread extends Thread {
             }
             try{
                 //System.out.println("Sleeping");
-                Thread.sleep((long)0,100);
+                Thread.sleep(Millis);
                 Thread.yield();
             }catch (Exception et){
                 System.out.println("Sleep went wrong");

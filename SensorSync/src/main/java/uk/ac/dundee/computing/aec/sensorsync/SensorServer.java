@@ -7,15 +7,12 @@ package uk.ac.dundee.computing.aec.sensorsync;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.channels.ClosedSelectorException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -35,17 +32,16 @@ public class SensorServer extends Thread {
 
     private ServerSocket serverSocket;
     private int port = 0;
-    private String ListenAddress ="127.0.0.1";
+    private String ListenAddress = "127.0.0.1";
 
     public SensorServer(int port) throws IOException {
         //serverSocket = new ServerSocket(port);
         this.port = port;
-        InetAddress address=InetAddress.getLocalHost();
-        System.out.println("Address = "+address.getHostAddress());
-        ListenAddress=address.getHostAddress();
-        
-        //serverSocket.setSoTimeout(50000);
+        InetAddress address = InetAddress.getLocalHost();
+        System.out.println("Address = " + address.getHostAddress());
+        ListenAddress = address.getHostAddress();
 
+        //serverSocket.setSoTimeout(50000);
     }
 
     public void run() {
@@ -61,7 +57,7 @@ public class SensorServer extends Thread {
             System.out.println("Can't open server socket channel");
             return;
         }
-        
+
         try {
             server.socket().bind(new java.net.InetSocketAddress(ListenAddress, port));
 
@@ -79,11 +75,24 @@ public class SensorServer extends Thread {
         }
 
         while (true) {
-            StringBuffer buff=new StringBuffer();
-            try{
-                selector.select();
+            StringBuffer buff = new StringBuffer();
+            try {
+                try {
+                    selector.select();
+                }catch (IOException ioe){
+                    System.out.println("Can not Select "+ioe);
+                    ioe.printStackTrace();
+                    return ;
+                }
                 // Get keys
-                Set keys = selector.selectedKeys();
+                Set keys=null;
+                try {
+                    keys= selector.selectedKeys();
+                   }catch (ClosedSelectorException  ioe){
+                    System.out.println("selector is closed"+ioe);
+                    ioe.printStackTrace();
+                    return ;
+                }
                 Iterator i = keys.iterator();
                 while (i.hasNext()) {
                     SelectionKey key = (SelectionKey) i.next();
@@ -91,7 +100,7 @@ public class SensorServer extends Thread {
                     // Remove the current key
                     i.remove();
 
-    // if isAccetable = true
+                    // if isAccetable = true
                     // then a client required a connection
                     if (key.isAcceptable()) {
                         // get client socket channel
@@ -103,7 +112,7 @@ public class SensorServer extends Thread {
                         continue;
                     }
 
-    // if isReadable = true
+                    // if isReadable = true
                     // then the server is ready to read 
                     if (key.isReadable()) {
 
@@ -115,7 +124,7 @@ public class SensorServer extends Thread {
                         try {
                             client.read(buffer);
                         } catch (Exception e) {
-                            // client is no longer active
+                            System.out.println("Can't read "+e);
                             e.printStackTrace();
                             continue;
                         }
@@ -125,27 +134,22 @@ public class SensorServer extends Thread {
                         Charset charset = Charset.forName("ISO-8859-1");
                         CharsetDecoder decoder = charset.newDecoder();
                         CharBuffer charBuffer = decoder.decode(buffer);
-                        //System.out.print(charBuffer.toString());
-                        /*SensorSaver sv = new SensorSaver(cluster, session);
-                        if (charBuffer.length() >=2){
-                        if (sv.Save(charBuffer.toString()) == false) {
-                            this.stop();
-                        }
-                        }*/
+                       
                         buff.append(charBuffer);
-                        if (buff.length()>2){
-                             //System.out.println(buff);
-                             SensorSaver sv = new SensorSaver(cluster, session);
-                             if (sv.Save(buff) == false) {
-                            this.stop();
-                        }
+                        if (buff.length() > 2) {
+                            System.out.println(buff);
+                            SensorSaver sv = new SensorSaver(cluster, session);
+                            if (sv.Save(buff) == false) {
+                                this.stop();
+                                return;
+                            }
                         }
                         continue;
                     }
                 }
 
-            }catch(Exception et){
-                System.out.println("Opps something went wrong !"+et);
+            } catch (Exception et) {
+                System.out.println("Opps something went wrong !" + et);
                 et.printStackTrace();
             }
         }

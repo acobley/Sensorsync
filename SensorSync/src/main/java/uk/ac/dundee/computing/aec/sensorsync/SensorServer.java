@@ -99,17 +99,19 @@ public class SensorServer extends Thread {
 
                     // Remove the current key
                     i.remove();
-
+                    
                     // if isAccetable = true
                     // then a client required a connection
                     if (key.isAcceptable()) {
                         // get client socket channel
+                        System.out.println ("Accepting new Socket");
                         SocketChannel client = server.accept();
                         // Non Blocking I/O
                         client.configureBlocking(false);
                         // recording to the selector (reading)
                         client.register(selector, SelectionKey.OP_READ);
                         continue;
+                        
                     }
 
                     // if isReadable = true
@@ -147,6 +149,7 @@ public class SensorServer extends Thread {
                                 return;
                             }
                         }
+                        
                         continue;
                     }
                 }

@@ -53,8 +53,14 @@ public class SensorSaver {
 
     public boolean Save(StringBuffer jsonstring) {
         String sBuff = jsonstring.toString();
+        JSONObject obj;
         //System.out.println(sBuff);
-        JSONObject obj = new JSONObject(sBuff);
+        try {
+            obj = new JSONObject(sBuff);
+        }catch (JSONException et){
+            System.out.println("JSON Parse error in "+sBuff);
+            return false;
+        }
         String DeviceName = obj.getJSONObject("SensorData").getString("device");
         UUID dUuid = java.util.UUID.fromString(DeviceName);
 
@@ -152,7 +158,7 @@ public class SensorSaver {
                 .value("metadata", Meta)
                 .value("reading", mp);
                
-        System.out.println("Insetion Statement "+dUuid+" : "+dd );
+        //System.out.println("Insetion Statement "+dUuid+" : "+dd );
         getSession().execute(statement);
         DataCount++;
         if (DataCount == 100){

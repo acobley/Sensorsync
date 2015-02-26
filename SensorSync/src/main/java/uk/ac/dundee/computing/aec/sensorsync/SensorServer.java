@@ -48,6 +48,7 @@ public class SensorServer extends Thread {
         Cluster cluster = CassandraHosts.getCluster();
 
         Session session = cluster.connect();
+        SensorSaver sv = new SensorSaver(cluster, session);
         ServerSocketChannel server = null;
         //http://www.onjava.com/pub/a/onjava/2002/09/04/nio.html?page=2
         try {
@@ -104,7 +105,7 @@ public class SensorServer extends Thread {
                     // then a client required a connection
                     if (key.isAcceptable()) {
                         // get client socket channel
-                        System.out.println ("Accepting new Socket");
+                        //System.out.println ("Accepting new Socket");
                         SocketChannel client = server.accept();
                         // Non Blocking I/O
                         client.configureBlocking(false);
@@ -139,16 +140,16 @@ public class SensorServer extends Thread {
                        
                         buff.append(charBuffer);
                         if (charBuffer.length() > 0) {
-                            System.out.println();
-                            System.out.println("----------------------------------------------");
-                            System.out.println("buff "+buff.length()+" : "+buff);
-                            System.out.println("charBuffer "+charBuffer.length()+" : "+charBuffer);
-                            SensorSaver sv = new SensorSaver(cluster, session);
-                            if (sv.Save(buff) == false) {
-                                this.stop();
-                                return;
-                            }
+                            //System.out.println();
+                            //System.out.println("----------------------------------------------");
+                            //System.out.println("buff "+buff.length()+" : "+buff);
+                            //System.out.println("charBuffer "+charBuffer.length()+" : "+charBuffer);
+                            
                             client.close();
+                            if (sv.Save(buff) == false) {
+                                System.out.println("Didn't save" +charBuffer+" Length"+charBuffer.length());
+                            }
+                            
                         }
                         
                         continue;

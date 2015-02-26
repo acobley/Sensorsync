@@ -148,6 +148,7 @@ public class SensorServer extends Thread {
                                 this.stop();
                                 return;
                             }
+                            client.close();
                         }
                         
                         continue;

@@ -21,7 +21,7 @@ public final class Keyspaces {
 "	metadata map <text,text>,\n" +
 "	reading map <text,frozen<SensorReading>>,\n" +
 "	Primary Key (name,insertion_time)\n" +
-");";
+")WITH CLUSTERING ORDER BY (insertion_time DESC);";
             
             String CreateSensorType = "CREATE TYPE if not exists sensorsync.SensorReading (\n" +
 "	\n" +

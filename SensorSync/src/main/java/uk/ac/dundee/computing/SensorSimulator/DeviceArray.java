@@ -19,7 +19,7 @@ import org.json.JSONObject;
 public class DeviceArray {
 
     static int Threads = 1;
-    Thread t[] = new Thread[Threads];
+    static Thread t[];
     static String ip = "127.0.0.1";
     static long delay = 1;
     static int ReadingCount=100;
@@ -92,7 +92,7 @@ public class DeviceArray {
                 System.out.println("\t Number of readings to send");
                 break;
         }
-
+        t = new Thread[Threads];
         //http://stackoverflow.com/questions/2541475/capture-sigint-in-java
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override

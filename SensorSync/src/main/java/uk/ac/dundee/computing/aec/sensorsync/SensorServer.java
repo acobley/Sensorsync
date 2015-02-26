@@ -166,6 +166,7 @@ public class SensorServer extends Thread {
                         SocketChannel clientChannel = (SocketChannel) key.channel();
                         int bytesRead = 0;
                         if (key.isReadable()) {
+                            
                             // the channel is non blocking so keep it open till the
                             // count is >=0
                             if ((bytesRead = clientChannel.read(buffer)) > 0) {
@@ -173,7 +174,7 @@ public class SensorServer extends Thread {
                                 String out = Charset.defaultCharset().decode(buffer).toString();
                                 //System.out.println(Charset.defaultCharset().decode(buffer));
                                 sb.append(out);
-
+                                System.out.print(key.hashCode()+" : ");
                                 buffer.clear();
                             }
                             if (bytesRead < 0) {

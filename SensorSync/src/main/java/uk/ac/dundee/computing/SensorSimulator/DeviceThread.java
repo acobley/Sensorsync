@@ -117,7 +117,8 @@ public class DeviceThread extends Thread {
                 sc = new Socket(ip, 19877);
                 OutputStream os = sc.getOutputStream();
                 PrintWriter out = new PrintWriter(os);
-                out.print(json);
+                out.print(json.toString());
+                System.out.print(" : "+json.toString().length());
                 out.close();
                 sc.close();
                 sent = true;

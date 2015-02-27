@@ -58,6 +58,7 @@ public class SensorServer extends Thread {
         SensorSaver sv = new SensorSaver(cluster, session);
         ServerSocketChannel server = null;
         StringBuffer sb = null;
+        Map<Integer, StringBuffer> hsb=new HashMap<Integer, StringBuffer> ();
         // create a new serversocketchannel. The channel is unbound.
 
         Selector selector = null;
@@ -157,6 +158,7 @@ public class SensorServer extends Thread {
                             buffer.clear();
                             //System.out.println("Start ?");
                             sb = new StringBuffer();
+                            hsb.put(key.hashCode(), sb);
                         }
 
                     } else {
@@ -173,8 +175,16 @@ public class SensorServer extends Thread {
                                 buffer.flip();
                                 String out = Charset.defaultCharset().decode(buffer).toString();
                                 //System.out.println(Charset.defaultCharset().decode(buffer));
-                                sb.append(out);
-                                System.out.print(key.hashCode()+" : ");
+                                StringBuffer sbh = hsb.get(key.hashCode());
+                                if (sbh==null){
+                                    //System.out.println("Sbh is null");
+                                    sb = new StringBuffer();
+                            hsb.put(key.hashCode(), sb);
+                            sbh = hsb.get(key.hashCode());
+                                }
+                                sbh.append(out);
+                                hsb.replace(key.hashCode(), sbh);
+                                //System.out.print(key.hashCode()+" : ");
                                 buffer.clear();
                             }
                             if (bytesRead < 0) {
@@ -182,10 +192,13 @@ public class SensorServer extends Thread {
                                 // channel is closed
 
                                 //System.out.println("Done");
-                                //System.out.println(sb.toString());
-                                if (sv.Save(sb) == false) {
+                                StringBuffer  sbh=hsb.get(key.hashCode());
+                                //System.out.println(sbh.toString());
+                                
+                                if (sv.Save(sbh) == false) {
                                     System.out.println("Didn't save" + sb.toString() + " Length" + sb.length());
                                 }
+                                hsb.remove(key.hashCode());
                                 clientChannel.close();
                             }
                         }
@@ -198,6 +211,7 @@ public class SensorServer extends Thread {
                 }
             } catch (Exception et) {
                 System.out.println("general Exception" + et);
+                et.printStackTrace();
                 return;
             }
         }

@@ -104,6 +104,7 @@ public class SensorServer extends Thread {
                     // if isAccetable = true
                     // then a client required a connection
                     if (key.isAcceptable()) {
+                        System.out.println("Key is acceptable"+key.hashCode());
                         // get client socket channel
                         //System.out.println ("Accepting new Socket");
                         SocketChannel client = server.accept();
@@ -118,12 +119,12 @@ public class SensorServer extends Thread {
                     // if isReadable = true
                     // then the server is ready to read 
                     if (key.isReadable()) {
-
+                        System.out.println("Key is readable"+key.hashCode());
                         SocketChannel client = (SocketChannel) key.channel();
 
                         // Read byte coming from the client
-                        int BUFFER_SIZE = 22254;
-                        ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+                        int BUFFER_SIZE = 20000;
+                        ByteBuffer buffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
                         try {
                             client.read(buffer);
                         } catch (Exception e) {

@@ -38,7 +38,7 @@ public class SensorHandler extends IoHandlerAdapter{
             return;
         }
         sv.Save(str);
-        System.out.println("Message"+str);
+        System.out.print(".");
     }
 
     @Override

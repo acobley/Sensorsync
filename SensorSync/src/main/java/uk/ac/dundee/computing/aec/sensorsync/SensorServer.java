@@ -9,26 +9,24 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.channels.ClosedSelectorException;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.util.Iterator;
-import java.util.Set;
+
+import org.apache.mina.core.service.IoAcceptor;
+import org.apache.mina.core.session.IdleStatus;
+import org.apache.mina.filter.codec.ProtocolCodecFilter;
+import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
+import org.apache.mina.filter.logging.LoggingFilter;
+import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import uk.ac.dundee.computing.aec.sensorsync.lib.CassandraHosts;
 
 /**
  *
  * @author Administrator Based upon
- * http://www.tutorialspoint.com/java/java_networking.htm
+ * https://mina.apache.org/mina-project/quick-start-guide.html
  */
-public class SensorServer extends Thread {
+public class SensorServer  {
 
     private ServerSocket serverSocket;
     private int port = 0;
@@ -44,123 +42,20 @@ public class SensorServer extends Thread {
         //serverSocket.setSoTimeout(50000);
     }
 
-    public void run() {
+    public void run() throws IOException {
         Cluster cluster = CassandraHosts.getCluster();
 
         Session session = cluster.connect();
         SensorSaver sv = new SensorSaver(cluster, session);
-        ServerSocketChannel server = null;
-        //http://www.onjava.com/pub/a/onjava/2002/09/04/nio.html?page=2
-        try {
-            server = ServerSocketChannel.open();
-            server.configureBlocking(false);
-        } catch (Exception et) {
-            System.out.println("Can't open server socket channel");
-            return;
-        }
+        IoAcceptor acceptor = new NioSocketAcceptor();
 
-        try {
-            server.socket().bind(new java.net.InetSocketAddress(ListenAddress, port));
+        acceptor.getFilterChain().addLast( "logger", new LoggingFilter() );
+        acceptor.getFilterChain().addLast( "codec", new ProtocolCodecFilter( new TextLineCodecFactory( Charset.forName( "UTF-8" ))));
+        acceptor.setHandler(  new SensorHandler() );
+        acceptor.getSessionConfig().setReadBufferSize( 2048 );
+        acceptor.getSessionConfig().setIdleTime( IdleStatus.BOTH_IDLE, 10 );
+ 
+            acceptor.bind(new InetSocketAddress(ListenAddress, port));
 
-        } catch (Exception et) {
-            System.out.println("Can't bind to port " + port);
-            return;
-        }
-        Selector selector = null;
-        try {
-            selector = Selector.open();
-            server.register(selector, SelectionKey.OP_ACCEPT);
-        } catch (Exception et) {
-            System.out.println("Can't open Selector ");
-            return;
-        }
-
-        while (true) {
-            StringBuffer buff = new StringBuffer();
-            try {
-                try {
-                    selector.select();
-                }catch (IOException ioe){
-                    System.out.println("Can not Select "+ioe);
-                    ioe.printStackTrace();
-                    return ;
-                }
-                // Get keys
-                Set keys=null;
-                try {
-                    keys= selector.selectedKeys();
-                   }catch (ClosedSelectorException  ioe){
-                    System.out.println("selector is closed"+ioe);
-                    ioe.printStackTrace();
-                    return ;
-                }
-                Iterator i = keys.iterator();
-                while (i.hasNext()) {
-                    SelectionKey key = (SelectionKey) i.next();
-
-                    // Remove the current key
-                    i.remove();
-                    
-                    // if isAccetable = true
-                    // then a client required a connection
-                    if (key.isAcceptable()) {
-                        System.out.println("Key is acceptable"+key.hashCode());
-                        // get client socket channel
-                        //System.out.println ("Accepting new Socket");
-                        SocketChannel client = server.accept();
-                        // Non Blocking I/O
-                        client.configureBlocking(false);
-                        // recording to the selector (reading)
-                        client.register(selector, SelectionKey.OP_READ);
-                        continue;
-                        
-                    }
-
-                    // if isReadable = true
-                    // then the server is ready to read 
-                    if (key.isReadable()) {
-                        System.out.println("Key is readable"+key.hashCode());
-                        SocketChannel client = (SocketChannel) key.channel();
-
-                        // Read byte coming from the client
-                        int BUFFER_SIZE = 20000;
-                        ByteBuffer buffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
-                        try {
-                            client.read(buffer);
-                        } catch (Exception e) {
-                            System.out.println("Can't read "+e);
-                            e.printStackTrace();
-                            continue;
-                        }
-
-                        // Show bytes on the console
-                        buffer.flip();
-                        Charset charset = Charset.forName("ISO-8859-1");
-                        CharsetDecoder decoder = charset.newDecoder();
-                        CharBuffer charBuffer = decoder.decode(buffer);
-                       
-                        buff.append(charBuffer);
-                        if (charBuffer.length() > 0) {
-                            //System.out.println();
-                            //System.out.println("----------------------------------------------");
-                            //System.out.println("buff "+buff.length()+" : "+buff);
-                            //System.out.println("charBuffer "+charBuffer.length()+" : "+charBuffer);
-                            
-                            client.close();
-                            if (sv.Save(buff) == false) {
-                                System.out.println("Didn't save" +charBuffer+" Length"+charBuffer.length());
-                            }
-                            
-                        }
-                        
-                        continue;
-                    }
-                }
-
-            } catch (Exception et) {
-                System.out.println("Opps something went wrong !" + et);
-                et.printStackTrace();
-            }
-        }
     }
 }

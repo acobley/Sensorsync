@@ -4,14 +4,26 @@
  * and open the template in the editor.
  */
 package uk.ac.dundee.computing.aec.sensorsync;
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.Session;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
+import uk.ac.dundee.computing.aec.sensorsync.lib.CassandraHosts;
 /**
  *
  * @author Administrator
  */
 public class SensorHandler extends IoHandlerAdapter{
+
+    SensorSaver sv =null;
+    public SensorHandler(){
+        super();
+        Cluster cluster = CassandraHosts.getCluster();
+
+        Session session = cluster.connect();
+         sv = new SensorSaver(cluster, session);
+    }
     @Override
     public void exceptionCaught( IoSession session, Throwable cause ) throws Exception
     {
@@ -25,7 +37,7 @@ public class SensorHandler extends IoHandlerAdapter{
             session.close();
             return;
         }
-
+        sv.Save(str);
         System.out.println("Message"+str);
     }
 

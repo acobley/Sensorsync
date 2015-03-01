@@ -51,8 +51,8 @@ public class SensorSaver {
         return this.session;
     }
 
-    public boolean Save(StringBuffer jsonstring) {
-        String sBuff = jsonstring.toString();
+    public boolean Save(String sBuff) {
+        //String sBuff = jsonstring.toString();
         JSONObject obj;
         //System.out.println(sBuff);
         try {

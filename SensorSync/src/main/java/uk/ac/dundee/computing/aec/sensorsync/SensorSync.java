@@ -11,7 +11,7 @@ import uk.ac.dundee.computing.aec.sensorsync.lib.CassandraHosts;
 
 /**
  *
- * @author andycobley
+ * @author andycobley 
  */
 public class SensorSync {
 

@@ -34,7 +34,7 @@ public class SensorSaver {
     Cluster cluster = null;
     Session session = null;
     UserType SensorReadingType = null;
-    int DataCount=0;
+    int DataCount = 0;
     private final HashMap CommandsMap = new HashMap();
 
     public SensorSaver(Cluster cluster, Session session) {
@@ -51,45 +51,45 @@ public class SensorSaver {
         return this.session;
     }
 
-    public boolean Save(StringBuffer jsonstring) {
-        String sBuff = jsonstring.toString();
+    public boolean Save(String sBuff) {
+        //String sBuff = jsonstring.toString();
         JSONObject obj;
         //System.out.println(sBuff);
         try {
             obj = new JSONObject(sBuff);
-        }catch (JSONException et){
-            System.out.println("JSON Parse error in "+sBuff);
+        } catch (JSONException et) {
+            System.out.println("JSON Parse error in " + sBuff);
             return false;
         }
         String DeviceName = obj.getJSONObject("SensorData").getString("device");
         UUID dUuid = java.util.UUID.fromString(DeviceName);
 
         String InsertionTime = obj.getJSONObject("SensorData").getString("insertion_time");
-        Date dd=null;
-        try{
+        Date dd = null;
+        try {
             dd = new Date(InsertionTime);
-        }catch (IllegalArgumentException et){
+        } catch (IllegalArgumentException et) {
             //Must not be Java format, try python
-            String pDateFormat="yyyy-MM-dd HH:mm:ss";
-            int dot=InsertionTime.lastIndexOf(".");
-            String trimmed=InsertionTime.substring(0, dot);
+            String pDateFormat = "yyyy-MM-dd HH:mm:ss";
+            int dot = InsertionTime.lastIndexOf(".");
+            String trimmed = InsertionTime.substring(0, dot);
             SimpleDateFormat formatter = new SimpleDateFormat(pDateFormat);
             try {
-                dd= formatter.parse(InsertionTime);
-            }catch (Exception etp){
-                System.out.println("Can't parse Python Date "+etp);
+                dd = formatter.parse(InsertionTime);
+            } catch (Exception etp) {
+                System.out.println("Can't parse Python Date " + etp);
                 return false;
             }
         }
         //System.out.println("Device Name " + DeviceName);
         //System.out.println("Insertion Time " + InsertionTime);
-        JSONObject jsonMeta=null;
+        JSONObject jsonMeta = null;
         try {
-        jsonMeta = obj.getJSONObject("meta");
-        }catch (Exception et){
-            jsonMeta=null;
+            jsonMeta = obj.getJSONObject("meta");
+        } catch (Exception et) {
+            jsonMeta = null;
         }
-        Map<String, String> Meta =null;
+        Map<String, String> Meta = null;
         if (jsonMeta != null) {
             Meta = new HashMap<String, String>();
             String[] metaNames = JSONObject.getNames(jsonMeta);
@@ -97,10 +97,10 @@ public class SensorSaver {
             for (int j = 0; j < metaNames.length; j++) {
                 String Name = metaNames[j];
                 String Value = jsonMeta.getString(Name);
-                
+
                 Meta.put(Name, Value);
                 //System.out.println(Name + ":" + Value);
-              
+
             }
         }
         JSONArray arr = obj.getJSONArray("sensors");
@@ -128,7 +128,7 @@ public class SensorSaver {
                     case 1:
                         try {
                             addFloat(objA.getString(names[j]), sr);
-                        }catch (JSONException et){
+                        } catch (JSONException et) {
                             addFloat(objA.getDouble(names[j]), sr);
                         }
                         break;
@@ -152,18 +152,18 @@ public class SensorSaver {
             mp.put(Name, sr);
 
         }
-        Statement statement= QueryBuilder.insertInto("sensorsync", "Sensors")
+        Statement statement = QueryBuilder.insertInto("sensorsync", "Sensors")
                 .value("name", dUuid)
                 .value("insertion_time", dd)
                 .value("metadata", Meta)
                 .value("reading", mp);
-               
+
         //System.out.println("Insetion Statement "+dUuid+" : "+dd );
         getSession().execute(statement);
         DataCount++;
-        if (DataCount == 100){
+        if (DataCount == 100) {
             System.out.println(DataCount);
-            DataCount=0;
+            DataCount = 0;
         }
         System.out.print(".");
         return true;
@@ -184,10 +184,10 @@ public class SensorSaver {
         return true;
 
     }
+
     private boolean addFloat(double Value, UDTValue sr) {
 
-
-        sr.setFloat("fValue", (float)Value);
+        sr.setFloat("fValue", (float) Value);
 
         return true;
 

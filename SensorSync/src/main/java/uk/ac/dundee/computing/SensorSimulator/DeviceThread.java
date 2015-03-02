@@ -118,6 +118,7 @@ public class DeviceThread extends Thread {
                 OutputStream os = sc.getOutputStream();
                 PrintWriter out = new PrintWriter(os);
                 out.print(json);
+                out.print("\r\n");
                 out.close();
                 sc.close();
                 sent = true;

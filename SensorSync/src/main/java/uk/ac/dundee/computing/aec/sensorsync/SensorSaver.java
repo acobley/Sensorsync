@@ -13,17 +13,13 @@ import com.datastax.driver.core.UserType;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import java.text.SimpleDateFormat;
 
-import static java.time.Instant.now;
-import java.util.AbstractMap;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import uk.ac.dundee.computing.aec.sensorsync.lib.CassandraHosts;
 
 /**
  *

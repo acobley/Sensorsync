@@ -16,7 +16,6 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
-import uk.ac.dundee.computing.aec.sensorsync.lib.CassandraHosts;
 
 /**
  *

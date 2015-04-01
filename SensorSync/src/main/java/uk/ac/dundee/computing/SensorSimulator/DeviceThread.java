@@ -63,7 +63,7 @@ public class DeviceThread extends Thread {
         //while (running) {
         for (int Count=0; Count<readingCount;Count++){
             if (Count %10 ==0){
-                System.out.println(dd.getDevice()+" : "+Count+ " :: "+ip);
+                System.out.println(dd.getInsertion_time()+" :: "+dd.getDevice()+" : "+Count+ " :: "+ip);
             }
             Sensor sensors[] = dd.getSensors();
             JSONArray jsonSensors = new JSONArray();

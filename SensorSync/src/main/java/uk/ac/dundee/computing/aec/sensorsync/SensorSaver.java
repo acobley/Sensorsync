@@ -11,6 +11,7 @@ import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.core.UserType;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import java.util.Date;
@@ -20,6 +21,7 @@ import java.util.UUID;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import uk.ac.dundee.computing.aec.sensorsync.lib.Convertors;
 
 /**
  *
@@ -63,8 +65,9 @@ public class SensorSaver {
         String InsertionTime = obj.getJSONObject("SensorData").getString("insertion_time");
         Date dd = null;
         try {
-            dd = new Date(InsertionTime);
-        } catch (IllegalArgumentException et) {
+            dd=Convertors.StringToDate(InsertionTime);
+            
+        } catch (IllegalArgumentException | ParseException et) {
             //Must not be Java format, try python
             String pDateFormat = "yyyy-MM-dd HH:mm:ss";
             int dot = InsertionTime.lastIndexOf(".");

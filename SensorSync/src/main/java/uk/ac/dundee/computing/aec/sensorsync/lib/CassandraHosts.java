@@ -15,14 +15,21 @@ import java.util.List;
  *
  * Hosts are 192.168.2.10 Seed for Vagrant hosts
  *
- *
- *
- *
+ * To run a cassandra node in Docker                         
+ * docker run -publish 9042:9042 --name node1 -d -v "$PWD/data:/var/lib/cassandra/data" cassandra:latest
+ * Data is stored in $PWD/Data
+ * to connect to the node (via docker)
+ * docker exec -i -t node1 cqlsh
+ * 
+ * tomcat on docker
+ * docker run -it -d -p 8080:8080 --name tomcat --link node1:node1 -v "$PWD/conf/tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml:ro" tomcat:8.0
+ * 
  */
 public final class CassandraHosts {
 
     private static Cluster cluster;
-    static String Host = "127.0.0.1";  //at least one starting point to talk to
+    //static String Host = "127.0.0.1";  //at least one starting point to talk to
+    static String Host = "node1";  //at least one starting point to talk to
 
     public CassandraHosts() {
 
@@ -60,9 +67,9 @@ public final class CassandraHosts {
         System.out.println("getCluster");
         cluster = Cluster.builder()
                 .addContactPoint(Host).build();
-        getHosts(cluster);
+       
         Keyspaces.SetUpKeySpaces(cluster);
-
+ getHosts(cluster);
         return cluster;
 
     }

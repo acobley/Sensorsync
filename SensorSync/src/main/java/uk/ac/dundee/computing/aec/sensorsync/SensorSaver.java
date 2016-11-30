@@ -60,7 +60,7 @@ public class SensorSaver {
             return false;
         }
         String DeviceName = obj.getJSONObject("SensorData").getString("device");
-        UUID dUuid = java.util.UUID.fromString(DeviceName);
+        String dUuid = DeviceName;
 
         String InsertionTime = obj.getJSONObject("SensorData").getString("insertion_time");
         Date dd = null;
@@ -71,7 +71,11 @@ public class SensorSaver {
             //Must not be Java format, try python
             String pDateFormat = "yyyy-MM-dd HH:mm:ss";
             int dot = InsertionTime.lastIndexOf(".");
-            String trimmed = InsertionTime.substring(0, dot);
+            if (dot >=0){
+               String trimmed = InsertionTime.substring(0, dot);
+            }else{
+                
+            }
             SimpleDateFormat formatter = new SimpleDateFormat(pDateFormat);
             try {
                 dd = formatter.parse(InsertionTime);
@@ -95,7 +99,14 @@ public class SensorSaver {
             //System.out.println("" + metaNames);
             for (int j = 0; j < metaNames.length; j++) {
                 String Name = metaNames[j];
-                String Value = jsonMeta.getString(Name);
+                System.out.println("name "+Name);
+                String Value =null;
+                try{
+                   Value = jsonMeta.getString(Name);
+                }catch(Exception et){
+                    double dValue =jsonMeta.getDouble(Name);
+                    Value= Double.toString(dValue);
+                }
 
                 Meta.put(Name, Value);
                 //System.out.println(Name + ":" + Value);

@@ -149,7 +149,7 @@ public final class Convertors {
         try {
             cl.setTime(sdf.parse(dd));
         } catch (ParseException et) {
-            System.out.println("Can't convert date" + et);
+            //System.out.println("Can't convert date" + et);
             throw et;
         }
         Date dt = cl.getTime();

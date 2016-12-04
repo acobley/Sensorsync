@@ -63,6 +63,7 @@ public class SensorSaver {
         String dUuid = DeviceName;
 
         String InsertionTime = obj.getJSONObject("SensorData").getString("insertion_time");
+        System.out.println("Parsing  "+dUuid+" : "+InsertionTime);
         Date dd = null;
         try {
             dd=Convertors.StringToDate(InsertionTime);
@@ -99,7 +100,7 @@ public class SensorSaver {
             //System.out.println("" + metaNames);
             for (int j = 0; j < metaNames.length; j++) {
                 String Name = metaNames[j];
-                System.out.println("name "+Name);
+                //System.out.println("name "+Name);
                 String Value =null;
                 try{
                    Value = jsonMeta.getString(Name);
@@ -139,11 +140,20 @@ public class SensorSaver {
                         try {
                             addFloat(objA.getString(names[j]), sr);
                         } catch (JSONException et) {
-                            addFloat(objA.getDouble(names[j]), sr);
+                            try {
+                               addFloat(objA.getDouble(names[j]), sr);
+                            }catch(JSONException etnull){
+                                //Maybe it was null or cant be parsed set to 0.0
+                                addFloat(0.0,sr);
+                            }
                         }
                         break;
                     case 2:
+                        try{
                         addInt(objA.getString(names[j]), sr);
+                        }catch(JSONException et){
+                                addInt("0", sr);
+                                }
                         break;
                     case 3:
                         addString(objA.getString(names[j]), sr);
@@ -168,7 +178,7 @@ public class SensorSaver {
                 .value("metadata", Meta)
                 .value("reading", mp);
 
-        //System.out.println("Insetion Statement "+dUuid+" : "+dd );
+        System.out.println("Insetion Statement "+dUuid+" : "+dd);
         getSession().execute(statement);
         DataCount++;
         if (DataCount == 100) {
@@ -186,7 +196,7 @@ public class SensorSaver {
         try {
             value = Float.parseFloat(sFloat);
         } catch (NumberFormatException et) {
-            return false;
+            value=(float)0.0;
         }
 
         sr.setFloat("fValue", value);
@@ -210,6 +220,7 @@ public class SensorSaver {
         try {
             value = Float.parseFloat(sFloat);
         } catch (NumberFormatException et) {
+            System.out.println("Can't add accuracy");
             return false;
         }
 
@@ -225,7 +236,7 @@ public class SensorSaver {
             value = Integer.parseInt(Value);
 
         } catch (NumberFormatException et) {
-            return false;
+            value=0;
         }
 
         sr.setInt("iValue", value);

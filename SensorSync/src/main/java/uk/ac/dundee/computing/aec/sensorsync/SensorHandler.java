@@ -36,6 +36,7 @@ public class SensorHandler extends IoHandlerAdapter {
     @Override
     public void messageReceived(IoSession session, Object message) throws Exception {
         String str = message.toString();
+        System.out.println(str);
         if (str.trim().equalsIgnoreCase("quit")) {
             session.close();
             return;

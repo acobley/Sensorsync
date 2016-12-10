@@ -105,8 +105,18 @@ public class SensorSaver {
                 try{
                    Value = jsonMeta.getString(Name);
                 }catch(Exception et){
-                    double dValue =jsonMeta.getDouble(Name);
-                    Value= Double.toString(dValue);
+                    try {
+                       double dValue =jsonMeta.getDouble(Name);
+                       Value= Double.toString(dValue);
+                    }catch (Exception notDoubleET){
+                        try{
+                        boolean bValue=jsonMeta.getBoolean(Name);
+                        Value=Boolean.toString(bValue);
+                        }catch(Exception notBooleanET){
+                            Value="Not Known";
+                        }
+                    }
+                    
                 }
 
                 Meta.put(Name, Value);

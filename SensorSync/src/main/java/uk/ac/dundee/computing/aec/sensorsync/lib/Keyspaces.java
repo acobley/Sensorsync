@@ -3,7 +3,11 @@ package uk.ac.dundee.computing.aec.sensorsync.lib;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.datastax.driver.core.*;
+import com.datastax.oss.driver.api.core.*;
+import com.datastax.oss.driver.api.core.cql.BoundStatement;
+import com.datastax.oss.driver.api.core.cql.PreparedStatement;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 
 public final class Keyspaces {
 
@@ -11,7 +15,7 @@ public final class Keyspaces {
 
     }
 
-    public static void SetUpKeySpaces(Cluster c) {
+    public static void SetUpKeySpaces(CqlSession session) {
         try {
             //Add some keyspaces here
             String createkeyspace = "create keyspace if not exists sensorsync  WITH replication = {'class':'SimpleStrategy', 'replication_factor':1}";
@@ -31,12 +35,11 @@ public final class Keyspaces {
         "Accuracy float\n"+            
 ");";
             
-            Session session = c.connect();
+            
             try {
                 PreparedStatement statement = session
                         .prepare(createkeyspace);
-                BoundStatement boundStatement = new BoundStatement(
-                        statement);
+                BoundStatement boundStatement = statement.bind();
                 ResultSet rs = session
                         .execute(boundStatement);
                 System.out.println("created Sensorsync keyspace ");
@@ -45,7 +48,7 @@ public final class Keyspaces {
             }
 System.out.println("" + CreateSensorType);
             try {
-                SimpleStatement cqlQuery = new SimpleStatement(CreateSensorType);
+                SimpleStatement cqlQuery = SimpleStatement.newInstance(CreateSensorType);
                 session.execute(cqlQuery);
             } catch (Exception et) {
                 System.out.println("Can't create sensortype " + et);
@@ -54,7 +57,7 @@ System.out.println("" + CreateSensorType);
             System.out.println("" + CreateSensorTable);
 
             try {
-                SimpleStatement cqlQuery = new SimpleStatement(CreateSensorTable);
+                SimpleStatement cqlQuery = SimpleStatement.newInstance(CreateSensorTable);
                 session.execute(cqlQuery);
             } catch (Exception et) {
                 System.out.println("Can't create sensor  table " + et);

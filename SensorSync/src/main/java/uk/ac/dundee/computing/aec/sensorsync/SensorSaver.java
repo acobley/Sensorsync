@@ -5,12 +5,18 @@
  */
 package uk.ac.dundee.computing.aec.sensorsync;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.Statement;
-import com.datastax.driver.core.UDTValue;
-import com.datastax.driver.core.UserType;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
+
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.core.cql.Statement;
+import com.datastax.oss.driver.api.core.data.UdtValue;
+import com.datastax.oss.driver.api.core.type.UserDefinedType;
+import com.datastax.oss.driver.api.querybuilder.*;
+
+import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.*;
+import com.datastax.oss.driver.api.querybuilder.select.Select;
+import com.datastax.oss.driver.api.querybuilder.insert.Insert;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -29,15 +35,15 @@ import uk.ac.dundee.computing.aec.sensorsync.lib.Convertors;
  */
 public class SensorSaver {
 
-    Cluster cluster = null;
-    Session session = null;
-    UserType SensorReadingType = null;
+   
+    CqlSession  session = null;
+    UserDefinedType SensorReadingType = null;
     int DataCount = 0;
     private final HashMap CommandsMap = new HashMap();
 
-    public SensorSaver(Cluster cluster, Session session) {
+    public SensorSaver(CqlSession session) {
         this.session = session;
-        SensorReadingType = cluster.getMetadata().getKeyspace("sensorsync").getUserType("SensorReading");
+        SensorReadingType = session.getMetadata().getKeyspace("sensorsync").flatMap(sensorsync -> sensorsync.getUserDefinedType("SensorReading")).orElseThrow(() -> new IllegalArgumentException("Missing UDT definition"));;
         CommandsMap.put("fValue", 1);
         CommandsMap.put("iValue", 2);
         CommandsMap.put("sValue", 3);
@@ -45,7 +51,7 @@ public class SensorSaver {
         CommandsMap.put("name", 5);
     }
 
-    public Session getSession() {
+    public CqlSession getSession() {
         return this.session;
     }
 
@@ -103,13 +109,13 @@ public class SensorSaver {
             }
         }
         JSONArray arr = obj.getJSONArray("sensors");
-        Map<String, UDTValue> mp = new HashMap<String, UDTValue>();
+        Map<String, UdtValue> mp = new HashMap<String, UdtValue>();
         for (int i = 0; i < arr.length(); i++) {
             JSONObject objA = arr.getJSONObject(i);
             String[] names = JSONObject.getNames(objA);
             //System.out.println("Sensor: ");
 
-            UDTValue sr;
+            UdtValue sr;
             sr = SensorReadingType.newValue();
             String Name = "";
             for (int j = 0; j < names.length; j++) {
@@ -151,12 +157,23 @@ public class SensorSaver {
             mp.put(Name, sr);
 
         }
+        
+        
+        
+
+        Insert insert = insertInto("sensorsync", "Sensors")
+                .value("name", literal(dUuid))
+                .value("insertion_time", literal(dd.toInstant()))
+                .value("metadata", literal(Meta))
+                .value("reading", literal(mp));
+        /*
         Statement statement = QueryBuilder.insertInto("sensorsync", "Sensors")
                 .value("name", dUuid)
                 .value("insertion_time", dd)
                 .value("metadata", Meta)
                 .value("reading", mp);
-
+*/
+        SimpleStatement statement = insert.build();
         //System.out.println("Insetion Statement "+dUuid+" : "+dd );
         getSession().execute(statement);
         DataCount++;
@@ -168,7 +185,7 @@ public class SensorSaver {
         return true;
     }
 
-    private boolean addFloat(String Value, UDTValue sr) {
+    private boolean addFloat(String Value, UdtValue sr) {
 
         String sFloat = Value;
         float value;
@@ -184,7 +201,7 @@ public class SensorSaver {
 
     }
 
-    private boolean addFloat(double Value, UDTValue sr) {
+    private boolean addFloat(double Value, UdtValue sr) {
 
         sr.setFloat("fValue", (float) Value);
 
@@ -192,7 +209,7 @@ public class SensorSaver {
 
     }
 
-    private boolean addAccuracy(String Value, UDTValue sr) {
+    private boolean addAccuracy(String Value, UdtValue sr) {
 
         String sFloat = Value;
         float value;
@@ -208,7 +225,7 @@ public class SensorSaver {
 
     }
 
-    private boolean addInt(String Value, UDTValue sr) {
+    private boolean addInt(String Value, UdtValue sr) {
         int value;
         try {
             value = Integer.parseInt(Value);
@@ -223,7 +240,7 @@ public class SensorSaver {
 
     }
 
-    private boolean addString(String Value, UDTValue sr) {
+    private boolean addString(String Value, UdtValue sr) {
 
         sr.setString("sValue", Value);
 

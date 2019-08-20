@@ -1,6 +1,7 @@
 package uk.ac.dundee.computing.aec.sensorsync.lib;
 
-import com.datastax.driver.core.*;
+import com.datastax.oss.driver.api.core.*;
+import java.net.InetSocketAddress;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -21,9 +22,8 @@ import java.util.List;
  */
 public final class CassandraHosts {
 
-    private static Cluster cluster;
-    static String Host = "127.0.0.1";  //at least one starting point to talk to
-
+    //static String Host = "127.0.0.1";  //at least one starting point to talk to
+    static String Host = "172.17.0.2";  //at least one starting point to talk to
     public CassandraHosts() {
 
     }
@@ -32,43 +32,22 @@ public final class CassandraHosts {
         return (Host);
     }
 
-    public static String[] getHosts(Cluster cluster) {
+    
 
-        if (cluster == null) {
-            System.out.println("Creating cluster connection");
-            cluster = Cluster.builder().addContactPoint(Host).build();
-        }
-        System.out.println("Cluster Name " + cluster.getClusterName());
-        Metadata mdata = cluster.getMetadata();
-        Set<Host> hosts = mdata.getAllHosts();
-        String sHosts[] = new String[hosts.size()];
-
-        Iterator<Host> it = hosts.iterator();
-        int i = 0;
-        while (it.hasNext()) {
-            Host ch = it.next();
-            sHosts[i] = (String) ch.getAddress().toString();
-
-            System.out.println("Hosts" + ch.getAddress().toString());
-            i++;
-        }
-
-        return sHosts;
-    }
-
-    public static Cluster getCluster() {
+    public static CqlSession getCluster() {
         System.out.println("getCluster");
-        cluster = Cluster.builder()
-                .addContactPoint(Host).build();
-        getHosts(cluster);
-        Keyspaces.SetUpKeySpaces(cluster);
+        CqlSession session = CqlSession.builder()
+                .addContactPoint(new InetSocketAddress(Host,9042))
+                .withLocalDatacenter("datacenter1")
+                .build();
+        
+       
+        Keyspaces.SetUpKeySpaces(session);
 
-        return cluster;
+        return session;
 
     }
 
-    public void close() {
-        cluster.close();
-    }
+  
 
 }

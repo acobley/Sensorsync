@@ -5,7 +5,7 @@
  */
 package uk.ac.dundee.computing.aec.sensorsync;
 
-import com.datastax.driver.core.Cluster;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;

@@ -5,8 +5,7 @@
  */
 package uk.ac.dundee.computing.aec.sensorsync;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
+import com.datastax.oss.driver.api.core.CqlSession;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
@@ -22,10 +21,11 @@ public class SensorHandler extends IoHandlerAdapter {
 
     public SensorHandler() {
         super();
-        Cluster cluster = CassandraHosts.getCluster();
+      
+        CqlSession session = CassandraHosts.getCluster();
 
-        Session session = cluster.connect();
-        sv = new SensorSaver(cluster, session);
+        
+        sv = new SensorSaver( session);
     }
 
     @Override

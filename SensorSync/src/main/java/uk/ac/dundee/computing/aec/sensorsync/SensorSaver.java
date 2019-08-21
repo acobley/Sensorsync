@@ -85,6 +85,7 @@ PreparedStatement PreparedInsert =null;
             SimpleDateFormat formatter = new SimpleDateFormat(pDateFormat);
             try {
                 dd = formatter.parse(InsertionTime);
+                //System.out.println("Parsed as Python time");
             } catch (Exception etp) {
                 System.out.println("Can't parse Python Date " + etp);
                 return false;
@@ -99,6 +100,7 @@ PreparedStatement PreparedInsert =null;
             jsonMeta = null;
         }
         Map<String, String> Meta = null;
+        /*  Not Flowerpower
         if (jsonMeta != null) {
             Meta = new HashMap<String, String>();
             String[] metaNames = JSONObject.getNames(jsonMeta);
@@ -112,6 +114,38 @@ PreparedStatement PreparedInsert =null;
 
             }
         }
+        */
+        if (jsonMeta != null) {
+            Meta = new HashMap<String, String>();
+            String[] metaNames = JSONObject.getNames(jsonMeta);
+            //System.out.println("" + metaNames);
+            for (int j = 0; j < metaNames.length; j++) {
+                String Name = metaNames[j];
+                //System.out.println("name "+Name);
+                String Value =null;
+                try{
+                   Value = jsonMeta.getString(Name);
+                }catch(Exception et){
+                    try {
+                       double dValue =jsonMeta.getDouble(Name);
+                       Value= Double.toString(dValue);
+                    }catch (Exception notDoubleET){
+                        try{
+                        boolean bValue=jsonMeta.getBoolean(Name);
+                        Value=Boolean.toString(bValue);
+                        }catch(Exception notBooleanET){
+                            Value="Not Known";
+                        }
+                    }
+                    
+                }
+
+                Meta.put(Name, Value);
+                //System.out.println(Name + ":" + Value);
+
+            }
+        }
+        
         JSONArray arr = obj.getJSONArray("sensors");
         Map<String, UdtValue> mp = new HashMap<String, UdtValue>();
         for (int i = 0; i < arr.length(); i++) {

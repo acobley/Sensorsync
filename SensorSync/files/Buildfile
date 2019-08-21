@@ -1,0 +1,16 @@
+
+docker stop node1
+docker rm node1
+docker stop node2
+docker rm node2
+docker run  --name node1  -p 7199:7199 -p 9042:9042 -p 9160:9160 -d -v "$PWD/data:/var/lib/cassandra/data" cassandra:latest
+docker run --name node2 -d -v "$PWD/data-node2:/var/lib/cassandra/data" -d -e CASSANDRA_SEEDS="$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' node1)" cassandra:latest
+cp ~/NetBeansProjects/Sensorsync/SensorSync/target/SensorSync-1.0-SNAPSHOT.jar .
+docker build -t sensor .
+docker tag sensor acobley/sensor
+docker push acobley/sensor
+docker stop sensor
+docker rm sensor
+sleep 60
+docker exec node1 nodetool status
+docker run -p 19877:19877 -d --link node1:node1 --name sensor acobley/sensor java  -classpath /SensorSync-1.0-SNAPSHOT.jar uk.ac.dundee.computing.aec.sensorsync.SensorSync

@@ -20,7 +20,7 @@ public final class Keyspaces {
             //Add some keyspaces here
             String createkeyspace = "create keyspace if not exists sensorsync  WITH replication = {'class':'SimpleStrategy', 'replication_factor':1}";
             String CreateSensorTable = "Create table if not exists sensorsync.Sensors(\n" +
-"	name uuid,\n" +
+"	name text,\n" +
 "	insertion_time timestamp,\n" +
 "	metadata map <text,text>,\n" +
 "	reading map <text,frozen<SensorReading>>,\n" +
@@ -63,9 +63,7 @@ System.out.println("" + CreateSensorType);
                 System.out.println("Can't create sensor  table " + et);
             }
 
-            
-            
-            session.close();
+          
 
         } catch (Exception et) {
             System.out.println("Other keyspace or coulm definition error" + et);

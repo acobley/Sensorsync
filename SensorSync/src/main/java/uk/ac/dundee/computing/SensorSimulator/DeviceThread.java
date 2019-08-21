@@ -122,6 +122,7 @@ public class DeviceThread extends Thread {
                 out.close();
                 sc.close();
                 sent = true;
+                System.out.println(json);
             } catch (Exception et) {
                 System.out.println("No Host "+dd.getDevice() +" : "+ip);
                 try{

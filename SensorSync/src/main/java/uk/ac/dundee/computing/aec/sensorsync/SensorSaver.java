@@ -62,11 +62,14 @@ PreparedStatement PreparedInsert =null;
     public boolean Save(String sBuff) {
         //String sBuff = jsonstring.toString();
         JSONObject obj;
+        System.out.println("Saving to Cassandra");
+        System.out.println(sBuff);
+        System.out.flush();
         //System.out.println(sBuff);
         try {
             obj = new JSONObject(sBuff);
         } catch (JSONException et) {
-            System.out.println("JSON Parse error in " + sBuff);
+            System.out.println("JSON Parse error  "+et);
             return false;
         }
         String DeviceName = obj.getJSONObject("SensorData").getString("device");

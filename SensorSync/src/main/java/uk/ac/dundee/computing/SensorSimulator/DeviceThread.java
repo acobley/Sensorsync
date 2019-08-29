@@ -23,6 +23,7 @@ public class DeviceThread extends Thread {
 
     Device dd = new Device();
     boolean running =false;
+    //String ip="34.73.44.96";
     String ip="127.0.0.1";
     long Millis=1;
     int readingCount=100;
@@ -115,6 +116,7 @@ public class DeviceThread extends Thread {
             while (sent == false){
             try {
                 sc = new Socket(ip, 19877);
+                //sc = new Socket(ip, 80);
                 OutputStream os = sc.getOutputStream();
                 PrintWriter out = new PrintWriter(os);
                 out.print(json);

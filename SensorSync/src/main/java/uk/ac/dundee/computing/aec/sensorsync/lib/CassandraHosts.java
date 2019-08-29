@@ -1,6 +1,11 @@
 package uk.ac.dundee.computing.aec.sensorsync.lib;
 
 import com.datastax.oss.driver.api.core.*;
+import com.datastax.oss.driver.api.core.cql.BoundStatement;
+import com.datastax.oss.driver.api.core.cql.PreparedStatement;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import java.net.InetSocketAddress;
 
 import java.util.Iterator;
@@ -44,6 +49,29 @@ public final class CassandraHosts {
        
         Keyspaces.SetUpKeySpaces(session);
 
+        SimpleStatement statement= SimpleStatement.newInstance("select cluster_name from system.local");
+        ResultSet rs = null;
+        
+        try {
+        rs = session.execute(statement);
+        }catch(Exception et){
+            System.out.println("can't execute statement select cluster_name from system.local"+et);
+        }
+        int Num=rs.getAvailableWithoutFetching();
+        if (Num==0) {
+            System.out.println("No cluster_name");
+            
+        } else {
+            for (Row row : rs) {
+                
+                String peer=row.getString("cluster_name");
+                System.out.println(peer);
+               
+            }
+        }
+        
+        
+   
         return session;
 
     }

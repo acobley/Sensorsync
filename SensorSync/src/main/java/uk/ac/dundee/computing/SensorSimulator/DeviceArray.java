@@ -22,7 +22,7 @@ public class DeviceArray {
     static Thread t[];
     static String ip = "127.0.0.1";
     static long delay = 1;
-    static int ReadingCount=1;
+    static int ReadingCount=10;
     public static void main(String[] args) {
         // TODO code application logic here
         final DeviceArray main = new DeviceArray();

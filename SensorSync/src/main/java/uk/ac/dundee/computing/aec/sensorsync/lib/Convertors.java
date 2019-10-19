@@ -6,8 +6,13 @@ import java.util.StringTokenizer;
 import com.eaio.uuid.UUID;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
+import java.time.format.DateTimeParseException;
+import java.util.TimeZone;
 
 public final class Convertors {
     public static int DISPLAY_IMAGE=0;
@@ -154,6 +159,28 @@ public final class Convertors {
         }
         Date dt = cl.getTime();
         return (dt);
+    }
+    
+    public static LocalDateTime StringToLOcalDateTime(String sDate) throws DateTimeParseException{
+        DateTimeFormatter sdf = DateTimeFormatter
+                    .ofPattern("EEE MMM d HH:mm:ss zzz yyyy");
+            LocalDateTime formatDateTime=null;
+            try{
+                
+               
+                formatDateTime = LocalDateTime.parse(sDate,sdf);
+               
+            }catch( DateTimeParseException et){
+                System.out.println("Can't format date for sending to Sensor " +et );
+                throw et;
+            }
+            return (formatDateTime);
+    }
+    
+    public static Date LocalDateTimetoDate(LocalDateTime ldt){
+        Date dt=null;
+        dt=Date.from( ldt.atZone( ZoneId.systemDefault()).toInstant());
+        return dt;
     }
     
 }

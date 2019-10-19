@@ -21,6 +21,7 @@ import com.datastax.oss.driver.api.querybuilder.insert.Insert;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -78,6 +79,12 @@ PreparedStatement PreparedInsert =null;
         String InsertionTime = obj.getJSONObject("SensorData").getString("insertion_time");
         Date dd = null;
         try {
+           String ldtTZ=obj.getJSONObject("SensorData").getString("TimeZone");
+            LocalDateTime ldt= Convertors.StringToLOcalDateTime(InsertionTime);
+            dd=Convertors.LocalDateTimetoDate(ldt);
+        }catch (Exception ldtet){
+        try {
+            System.out.println("can't covert LocalDateTime to date "+InsertionTime);
             dd=Convertors.StringToDate(InsertionTime);
             
         } catch (IllegalArgumentException | ParseException et) {
@@ -93,6 +100,7 @@ PreparedStatement PreparedInsert =null;
                 System.out.println("Can't parse Python Date " + etp);
                 return false;
             }
+        }
         }
         //System.out.println("Device Name " + DeviceName);
         //System.out.println("Insertion Time " + InsertionTime);

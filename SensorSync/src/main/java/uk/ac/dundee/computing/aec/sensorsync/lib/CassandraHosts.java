@@ -28,7 +28,7 @@ import java.util.List;
 public final class CassandraHosts {
 
     //static String Host = "127.0.0.1";  //at least one starting point to talk to
-    static String Host = "172.17.0.2";  //at least one starting point to talk to
+    static String Host = "node1";  //at least one starting point to talk to
     public CassandraHosts() {
 
     }
